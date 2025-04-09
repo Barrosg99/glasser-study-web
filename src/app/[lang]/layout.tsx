@@ -3,6 +3,7 @@ import { Comfortaa, Montserrat } from "next/font/google";
 import "../globals.css";
 
 import { i18n, type Locale } from "../../../i18n-config";
+import ApolloWrapper from "@/components/ApolloWrapper";
 
 const comfortaa = Comfortaa({
   variable: "--font-comfortaa",
@@ -39,7 +40,7 @@ export default async function RootLayout(props: {
       <body
         className={`${comfortaa.variable} ${montserrat.variable} antialiased`}
       >
-        {children}
+        <ApolloWrapper>{children}</ApolloWrapper>
       </body>
     </html>
   );

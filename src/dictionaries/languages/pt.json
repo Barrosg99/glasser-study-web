@@ -9,5 +9,17 @@
       "description": "Junte-se aos nossos grupos de estudo para melhorar sua experiência de aprendizado e conectar-se com estudantes que compartilham seus objetivos.",
       "findGroup": "Encontrar um Grupo"
     }
+  },
+  "login": {
+    "body": {
+      "title": "Acesse sua conta",
+      "email": { "placeholder": "Digite seu email" },
+      "password": { "label": "Senha", "placeholder": "Digite sua senha" },
+      "submit": { "loading": "Entrando...", "text": "Entrar" }
+    },
+    "footer": {
+      "title": "Não tem uma conta?",
+      "link": "Cadastre-se"
+    }
   }
 }

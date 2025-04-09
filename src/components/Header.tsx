@@ -12,11 +12,11 @@ export default function Header({
   showButtons?: boolean;
 }) {
   return (
-    <header className="w-full bg-white shadow-sm fixed min-h-[74px] top-0">
+    <header className="w-full bg-[#990000] shadow-sm fixed min-h-[74px] top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <LocaleLink
           href="/"
-          className="text-xl text-black"
+          className="text-xl text-white"
           style={{ fontFamily: "var(--font-comfortaa)" }}
         >
           Glasser Study
@@ -27,13 +27,13 @@ export default function Header({
             <>
               <LocaleLink
                 href="/login"
-                className="text-blue-500 border border-blue-500 px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out"
+                className="text-white bg-[#B22222] font-medium px-4 py-2 rounded hover:bg-[#c92121] hover:text-white transition duration-300 ease-in-out"
               >
                 {dictionary.login}
               </LocaleLink>
               <LocaleLink
                 href="/signup"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-300 transition duration-300 ease-in-out"
+                className="bg-white text-[#990000] font-medium px-4 py-2 rounded hover:bg-[#cfcfcf] transition duration-300 ease-in-out"
               >
                 {dictionary.signUp}
               </LocaleLink>

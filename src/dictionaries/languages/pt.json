@@ -21,5 +21,23 @@
       "title": "Não tem uma conta?",
       "link": "Cadastre-se"
     }
+  },
+  "signUp": {
+    "body": {
+      "title": "Crie sua conta",
+      "name": { "label": "Nome", "placeholder": "Digite seu nome" },
+      "goal": { "label": "Objetivo", "placeholder": "Digite seu objetivo" },
+      "email": { "placeholder": "Digite seu email" },
+      "password": { "label": "Senha", "placeholder": "Digite sua senha" },
+      "confirmPassword": {
+        "label": "Confirmar Senha",
+        "placeholder": "Repita sua senha"
+      },
+      "submit": { "loading": "Criando...", "text": "Criar" }
+    },
+    "footer": {
+      "title": "Já tem uma conta?",
+      "link": "Login"
+    }
   }
 }

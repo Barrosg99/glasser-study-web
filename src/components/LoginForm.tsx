@@ -104,12 +104,10 @@ export default function LoginForm({
         </div>
       </div>
       <div className="relative w-1/2 items-center justify-center hidden md:flex">
-        {/* <span className="text-white text-xl">Imagem</span> */}
         <Image
           src="/images/login.svg"
           alt="Logo"
           fill
-          objectPosition="none"
           style={{ objectFit: "contain" }}
         />
       </div>

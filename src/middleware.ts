@@ -27,6 +27,7 @@ export function middleware(request: NextRequest) {
   if (
     [
       "/images/login.svg",
+      "/images/sign-up.svg",
       "/favicon.ico",
       "/file.svg",
       "/globe.svg",

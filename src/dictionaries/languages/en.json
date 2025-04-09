@@ -21,5 +21,23 @@
       "title": "Don't have an account?",
       "link": "Sign Up"
     }
+  },
+  "signUp": {
+    "body": {
+      "title": "Create your account",
+      "name": { "label": "Name", "placeholder": "Enter your name" },
+      "goal": { "label": "Goal", "placeholder": "Enter your goal" },
+      "email": { "placeholder": "Enter your email" },
+      "password": { "label": "Password", "placeholder": "Enter your password" },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm your password"
+      },
+      "submit": { "loading": "Creating...", "text": "Create" }
+    },
+    "footer": {
+      "title": "Already have an account?",
+      "link": "Login"
+    }
   }
 }

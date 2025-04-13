@@ -6,20 +6,12 @@ import { useState } from "react";
 import LocaleLink from "./LocaleLink";
 import { getDictionary } from "@/dictionaries";
 import Image from "next/image";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 const SIGNUP_MUTATION = gql`
-  mutation SignUp(
-    $email: String!
-    $password: String!
-    $name: String!
-    $goal: String!
-  ) {
-    signUp(email: $email, password: $password, name: $name, goal: $goal) {
-      token
-      user {
-        id
-        name
-      }
+  mutation SignUp($createUserData: CreateUserDto!) {
+    signUp(createUserData: $createUserData) {
+      id
     }
   }
 `;
@@ -30,8 +22,12 @@ export default function SignUp({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["signUp"];
 }) {
   const { body, footer } = dictionary;
-
   const router = useRouter();
+
+  const [token] = useLocalStorage<string>("token");
+  if (token) {
+    router.push("/");
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,7 +46,7 @@ export default function SignUp({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    signUp({ variables: { email, password, name, goal } });
+    signUp({ variables: { createUserData: { email, name, password } } });
   };
 
   return (
@@ -159,13 +155,13 @@ export default function SignUp({
         </div>
       </div>
       <div className="relative w-1/2 items-center justify-center hidden md:flex">
-              <Image
-                src="/images/sign-up.svg"
-                alt="Logo"
-                fill
-                style={{ objectFit: "contain" }}
-              />
-            </div>
+        <Image
+          src="/images/sign-up.svg"
+          alt="Logo"
+          fill
+          style={{ objectFit: "contain" }}
+        />
+      </div>
     </div>
   );
 }

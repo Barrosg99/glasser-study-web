@@ -6,15 +6,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import LocaleLink from "./LocaleLink";
 import Image from "next/image";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation Login($userLoginData: LoggedUserDto!) {
+    login(userLoginData: $userLoginData) {
       token
-      user {
-        id
-        name
-      }
     }
   }
 `;
@@ -25,14 +22,19 @@ export default function LoginForm({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["login"];
 }) {
   const { body, footer } = dictionary;
-
   const router = useRouter();
+
+  const [token, setToken] = useLocalStorage<string>("token");
+  if (token) {
+    router.push("/");
+  }
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
-      localStorage.setItem("token", data.login.token);
+      setToken(data.login.token);
       router.push("/");
     },
     onError: (err) => {
@@ -43,7 +45,14 @@ export default function LoginForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    login({ variables: { email, password } });
+    login({
+      variables: {
+        userLoginData: {
+          email,
+          password,
+        },
+      },
+    });
   };
 
   return (

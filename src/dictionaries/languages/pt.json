@@ -1,7 +1,8 @@
 {
   "header": {
     "login": "Entrar",
-    "signUp": "Cadastrar"
+    "signUp": "Cadastrar",
+    "logout": "Sair"
   },
   "home": {
     "body": {

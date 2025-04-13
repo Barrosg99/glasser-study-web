@@ -55,7 +55,7 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+        className="flex items-center gap-2 text-white hover:text-gray-400"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

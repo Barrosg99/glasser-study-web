@@ -9,5 +9,17 @@
       "description": "Join our study groups to enhance your learning experience and connect with like-minded students.",
       "findGroup": "Find a Study Group"
     }
+  },
+  "login": {
+    "body": {
+      "title": "Access your account",
+      "email": { "placeholder": "Enter your email" },
+      "password": { "label": "Password", "placeholder": "Enter your password" },
+      "submit": { "loading": "Logging in...", "text": "Login" }
+    },
+    "footer": {
+      "title": "Don't have an account?",
+      "link": "Sign Up"
+    }
   }
 }

@@ -4,6 +4,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { getDictionary } from "@/dictionaries";
 import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useEffect, useState } from "react";
 
 export default function Header({
   dictionary,
@@ -12,8 +13,17 @@ export default function Header({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["header"];
   showButtons?: boolean;
 }) {
-  // const token = global?.localStorage.getItem("token");
   const [token, setToken] = useLocalStorage<string>("token");
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted)
+    return (
+      <header className="w-full bg-[#990000] shadow-sm fixed min-h-[74px] top-0 z-50"></header>
+    );
 
   return (
     <header className="w-full bg-[#990000] shadow-sm fixed min-h-[74px] top-0 z-50">

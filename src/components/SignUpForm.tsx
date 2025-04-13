@@ -2,7 +2,7 @@
 
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LocaleLink from "./LocaleLink";
 import { getDictionary } from "@/dictionaries";
 import Image from "next/image";
@@ -25,9 +25,11 @@ export default function SignUp({
   const router = useRouter();
 
   const [token] = useLocalStorage<string>("token");
-  if (token) {
-    router.push("/");
-  }
+  useEffect(() => {
+    if (token) {
+      router.push("/");
+    }
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

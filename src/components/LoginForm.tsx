@@ -3,7 +3,7 @@
 import { getDictionary } from "@/dictionaries";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LocaleLink from "./LocaleLink";
 import Image from "next/image";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -25,9 +25,11 @@ export default function LoginForm({
   const router = useRouter();
 
   const [token, setToken] = useLocalStorage<string>("token");
-  if (token) {
-    router.push("/");
-  }
+  useEffect(() => {
+      if (token) {
+        router.push("/");
+      }
+    });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

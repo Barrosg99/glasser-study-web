@@ -11,6 +11,9 @@
   :focus-visible {
     outline: none;
   }
+  button {
+    cursor: pointer;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,0 +1,13 @@
+{
+  "header": {
+    "login": "Entrar",
+    "signUp": "Cadastrar"
+  },
+  "home": {
+    "body": {
+      "title": "Aprenda Melhor Juntos",
+      "description": "Junte-se aos nossos grupos de estudo para melhorar sua experiência de aprendizado e conectar-se com estudantes que compartilham seus objetivos.",
+      "findGroup": "Encontrar um Grupo"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "header": {
+    "login": "Login",
+    "signUp": "Sign Up"
+  },
+  "home": {
+    "body": {
+      "title": "Learn Better Together",
+      "description": "Join our study groups to enhance your learning experience and connect with like-minded students.",
+      "findGroup": "Find a Study Group"
+    }
+  }
+}

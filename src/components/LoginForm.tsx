@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import LocaleLink from "./LocaleLink";
 import Image from "next/image";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { toast } from "react-hot-toast";
 
 const LOGIN_MUTATION = gql`
   mutation Login($userLoginData: LoggedUserDto!) {
@@ -38,9 +39,10 @@ export default function LoginForm({
     onCompleted: (data) => {
       setToken(data.login.token);
       router.push("/");
+      toast.success(body.toast.success);
     },
-    onError: (err) => {
-      console.error(err);
+    onError: () => {
+      toast.error(body.toast.error);
     },
   });
 

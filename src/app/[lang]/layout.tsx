@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Comfortaa, Montserrat } from "next/font/google";
 import "../globals.css";
+import { Toaster } from "react-hot-toast";
 
 import { i18n, type Locale } from "../../../i18n-config";
 import ApolloWrapper from "@/components/ApolloWrapper";
@@ -40,7 +41,10 @@ export default async function RootLayout(props: {
       <body
         className={`${comfortaa.variable} ${montserrat.variable} antialiased`}
       >
-        <ApolloWrapper>{children}</ApolloWrapper>
+        <ApolloWrapper>
+          <Toaster position="top-center" />
+          {children}
+        </ApolloWrapper>
       </body>
     </html>
   );

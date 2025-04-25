@@ -52,7 +52,7 @@ export default function SignUp({
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error(body.toast.passwordError);
+      toast.error(body.toast.diffPassword);
       return;
     }
 

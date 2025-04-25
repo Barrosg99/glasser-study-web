@@ -34,6 +34,7 @@
       "toast": {
         "success": "Account created successfully",
         "error": "Error creating account",
+        "diffPassword": "Passwords do not match",
         "passwordError": "Password must be between 8 and 12 characters, including letters and numbers"
       },
       "name": { "label": "Name", "placeholder": "Enter your name" },

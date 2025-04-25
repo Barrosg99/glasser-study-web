@@ -34,6 +34,7 @@
       "toast": {
         "success": "Conta criada com sucesso",
         "error": "Erro ao criar conta",
+        "diffPassword": "As senhas não coincidem",
         "passwordError": "A senha deve conter entre 8 e 12 caracteres, incluindo letras e números"
       },
       "name": { "label": "Nome", "placeholder": "Digite seu nome" },

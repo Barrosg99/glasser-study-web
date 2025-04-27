@@ -40,5 +40,10 @@
       "title": "Já tem uma conta?",
       "link": "Login"
     }
+  },
+  "groups": {
+    "search": {
+      "placeholder": "Com quem quer falar?"
+    }
   }
 }

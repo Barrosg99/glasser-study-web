@@ -40,5 +40,10 @@
       "title": "Already have an account?",
       "link": "Login"
     }
+  },
+  "groups": {
+    "search": {
+      "placeholder": "Search for a group..."
+    }
   }
 }

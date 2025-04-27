@@ -21,6 +21,9 @@ const UPDATE_USER = gql`
   mutation UpdateMe($userData: CreateUserDto!) {
     updateMe(userData: $userData) {
       id
+      name
+      email
+      goal
     }
   }
 `;
@@ -60,6 +63,19 @@ export default function ProfileForm({
       toast.success(body.toast.success);
       setPassword("");
       setConfirmPassword("");
+    },
+    update: (cache, { data: mutationData }) => {
+      const existingData = cache.readQuery({ query: GET_USER });
+      if (existingData) {
+        cache.writeQuery({
+          query: GET_USER,
+          data: {
+            me: {
+              ...mutationData.updateMe,
+            },
+          },
+        });
+      }
     },
     onError: () => {
       toast.error(body.toast.error);
@@ -127,6 +143,20 @@ export default function ProfileForm({
           {body.title}
         </h1>
         <form onSubmit={handleSubmit}>
+          <label
+            htmlFor="email"
+            className="block mb-2 text-sm font-medium text-black"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            className="bg-gray-100 border border-gray-300 text-gray-500 text-sm rounded-lg block w-full p-2.5 mb-5 md:w-2/3"
+            value={data?.me?.email || ""}
+            disabled
+          />
+
           <label
             htmlFor="name"
             className="block mb-2 text-sm font-medium text-black"

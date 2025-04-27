@@ -7,6 +7,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Menu } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Header({
   dictionary,
@@ -17,6 +18,7 @@ export default function Header({
 }) {
   const [token, setToken] = useLocalStorage<string>("token");
   const [hasMounted, setHasMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setHasMounted(true);
@@ -83,6 +85,7 @@ export default function Header({
                       toast.success(dictionary.logoutSuccess);
                       const menu = document.getElementById("user-menu");
                       menu?.classList.add("hidden");
+                      router.push("/login");
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >

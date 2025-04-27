@@ -5,6 +5,7 @@ import { getDictionary } from "@/dictionaries";
 import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Header({
   dictionary,
@@ -56,7 +57,10 @@ export default function Header({
           {token && (
             <>
               <button
-                onClick={() => setToken(undefined)}
+                onClick={() => {
+                  setToken(undefined);
+                  toast.success(dictionary.logoutSuccess);
+                }}
                 className="text-white bg-[#B22222] font-medium px-4 py-2 rounded hover:bg-[#c92121] hover:text-white transition duration-300 ease-in-out"
               >
                 {dictionary.logout}

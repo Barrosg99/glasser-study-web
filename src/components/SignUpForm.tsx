@@ -7,6 +7,7 @@ import LocaleLink from "./LocaleLink";
 import { getDictionary } from "@/dictionaries";
 import Image from "next/image";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { toast } from "react-hot-toast";
 
 const SIGNUP_MUTATION = gql`
   mutation SignUp($createUserData: CreateUserDto!) {
@@ -28,6 +29,7 @@ export default function SignUp({
   useEffect(() => {
     if (token) {
       router.push("/");
+      toast.success(body.toast.success);
     }
   });
   const [email, setEmail] = useState("");
@@ -35,20 +37,32 @@ export default function SignUp({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [goal, setGoal] = useState("");
+  const goalsValues = ["LEARN", "TEACH", "GROUP_STUDY"];
 
   const [signUp, { loading }] = useMutation(SIGNUP_MUTATION, {
     onCompleted: () => {
       router.push("/login");
     },
-    onError: (err) => {
-      console.error(err);
+    onError: () => {
+      toast.error(body.toast.error);
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    signUp({ variables: { createUserData: { email, name, password } } });
+    if (password !== confirmPassword) {
+      toast.error(body.toast.diffPassword);
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error(body.toast.passwordError);
+      return;
+    }
+
+    signUp({ variables: { createUserData: { email, name, password, goal } } });
   };
 
   return (
@@ -70,7 +84,10 @@ export default function SignUp({
             className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-5 md:w-2/3"
             placeholder={body.name.placeholder}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
+              setName(value);
+            }}
             required
           />
 
@@ -96,15 +113,22 @@ export default function SignUp({
           >
             {body.goal.label}
           </label>
-          <input
-            type="text"
+          <select
             id="goal"
             className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-5 md:w-2/3"
-            placeholder={body.goal.placeholder}
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             required
-          />
+          >
+            <option value="">{body.goal.placeholder}</option>
+            {body.goal.options.map((option, index) => {
+              return (
+                <option key={index} value={goalsValues[index]}>
+                  {option}
+                </option>
+              );
+            })}
+          </select>
 
           <label
             htmlFor="password"

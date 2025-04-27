@@ -6,6 +6,7 @@ import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Menu } from "lucide-react";
 
 export default function Header({
   dictionary,
@@ -56,15 +57,39 @@ export default function Header({
           )}
           {token && (
             <>
-              <button
-                onClick={() => {
-                  setToken(undefined);
-                  toast.success(dictionary.logoutSuccess);
-                }}
-                className="text-white bg-[#B22222] font-medium px-4 py-2 rounded hover:bg-[#c92121] hover:text-white transition duration-300 ease-in-out"
-              >
-                {dictionary.logout}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    const menu = document.getElementById("user-menu");
+                    menu?.classList.toggle("hidden");
+                  }}
+                  className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
+                >
+                  <Menu size={24} />
+                </button>
+                <div
+                  id="user-menu"
+                  className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                >
+                  <LocaleLink
+                    href="/profile"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {dictionary.profile}
+                  </LocaleLink>
+                  <button
+                    onClick={() => {
+                      setToken(undefined);
+                      toast.success(dictionary.logoutSuccess);
+                      const menu = document.getElementById("user-menu");
+                      menu?.classList.add("hidden");
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {dictionary.logout}
+                  </button>
+                </div>
+              </div>
             </>
           )}
         </div>

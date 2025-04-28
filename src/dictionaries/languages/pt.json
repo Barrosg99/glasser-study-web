@@ -2,7 +2,9 @@
   "header": {
     "login": "Entrar",
     "signUp": "Cadastrar",
-    "logout": "Sair"
+    "logout": "Sair",
+    "logoutSuccess": "Deslogado com sucesso",
+    "profile": "Perfil"
   },
   "home": {
     "body": {
@@ -14,6 +16,10 @@
   "login": {
     "body": {
       "title": "Acesse sua conta",
+      "toast": {
+        "success": "Logado com sucesso",
+        "error": "Erro ao logar"
+      },
       "email": { "placeholder": "Digite seu email" },
       "password": { "label": "Senha", "placeholder": "Digite sua senha" },
       "submit": { "loading": "Entrando...", "text": "Entrar" }
@@ -26,8 +32,18 @@
   "signUp": {
     "body": {
       "title": "Crie sua conta",
+      "toast": {
+        "success": "Conta criada com sucesso",
+        "error": "Erro ao criar conta",
+        "diffPassword": "As senhas não coincidem",
+        "passwordError": "A senha deve conter entre 8 e 12 caracteres, incluindo letras e números"
+      },
       "name": { "label": "Nome", "placeholder": "Digite seu nome" },
-      "goal": { "label": "Objetivo", "placeholder": "Digite seu objetivo" },
+      "goal": {
+        "label": "Objetivo",
+        "placeholder": "Digite seu objetivo",
+        "options": ["Aprender", "Ensinar", "Estudar em grupo"]
+      },
       "email": { "placeholder": "Digite seu email" },
       "password": { "label": "Senha", "placeholder": "Digite sua senha" },
       "confirmPassword": {
@@ -39,6 +55,29 @@
     "footer": {
       "title": "Já tem uma conta?",
       "link": "Login"
+    }
+  },
+  "profile": {
+    "body": {
+      "title": "Editar Perfil",
+      "toast": {
+        "success": "Perfil atualizado com sucesso",
+        "error": "Erro ao atualizar perfil",
+        "diffPassword": "As senhas não coincidem",
+        "passwordError": "A senha deve conter entre 8 e 12 caracteres, incluindo letras e números"
+      },
+      "name": { "label": "Nome", "placeholder": "Digite seu nome" },
+      "goal": {
+        "label": "Objetivo",
+        "placeholder": "Digite seu objetivo",
+        "options": ["Aprender", "Ensinar", "Estudar em grupo"]
+      },
+      "password": { "label": "Nova Senha", "placeholder": "Digite nova senha" },
+      "confirmPassword": {
+        "label": "Confirmar Nova Senha",
+        "placeholder": "Confirme nova senha"
+      },
+      "submit": { "loading": "Atualizando...", "text": "Atualizar Perfil" }
     }
   },
   "groups": {

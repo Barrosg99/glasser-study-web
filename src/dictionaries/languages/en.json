@@ -2,7 +2,9 @@
   "header": {
     "login": "Login",
     "signUp": "Sign Up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully",
+    "profile": "Profile"
   },
   "home": {
     "body": {
@@ -14,6 +16,10 @@
   "login": {
     "body": {
       "title": "Access your account",
+      "toast": {
+        "success": "Logged in successfully",
+        "error": "Error logging in"
+      },
       "email": { "placeholder": "Enter your email" },
       "password": { "label": "Password", "placeholder": "Enter your password" },
       "submit": { "loading": "Logging in...", "text": "Login" }
@@ -26,8 +32,18 @@
   "signUp": {
     "body": {
       "title": "Create your account",
+      "toast": {
+        "success": "Account created successfully",
+        "error": "Error creating account",
+        "diffPassword": "Passwords do not match",
+        "passwordError": "Password must be between 8 and 12 characters, including letters and numbers"
+      },
       "name": { "label": "Name", "placeholder": "Enter your name" },
-      "goal": { "label": "Goal", "placeholder": "Enter your goal" },
+      "goal": {
+        "label": "Goal",
+        "placeholder": "Enter your goal",
+        "options": ["Learn", "Teach", "Group Study"]
+      },
       "email": { "placeholder": "Enter your email" },
       "password": { "label": "Password", "placeholder": "Enter your password" },
       "confirmPassword": {
@@ -41,9 +57,35 @@
       "link": "Login"
     }
   },
-  "groups": {
-    "search": {
-      "placeholder": "Search for a group..."
+  "profile": {
+    "body": {
+      "title": "Edit Profile",
+      "toast": {
+        "success": "Profile updated successfully",
+        "error": "Error updating profile",
+        "diffPassword": "Passwords do not match",
+        "passwordError": "Password must be between 8 and 12 characters, including letters and numbers"
+      },
+      "name": { "label": "Name", "placeholder": "Enter your name" },
+      "goal": {
+        "label": "Goal",
+        "placeholder": "Enter your goal",
+        "options": ["Learn", "Teach", "Group Study"]
+      },
+      "password": {
+        "label": "New Password",
+        "placeholder": "Enter new password"
+      },
+      "confirmPassword": {
+        "label": "Confirm New Password",
+        "placeholder": "Confirm new password"
+      },
+      "submit": { "loading": "Updating...", "text": "Update Profile" }
+    },
+    "groups": {
+      "search": {
+        "placeholder": "Search for a group..."
+      }
     }
   }
 }

@@ -1,77 +1,162 @@
 "use client";
 
-import { gql, useMutation } from "@apollo/client";
-import { useRouter } from "next/navigation";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import LocaleLink from "./LocaleLink";
 import { getDictionary } from "@/dictionaries";
-import Image from "next/image";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { toast } from "react-hot-toast";
 
-const SIGNUP_MUTATION = gql`
-  mutation SignUp($createUserData: CreateUserDto!) {
-    signUp(createUserData: $createUserData) {
+const GET_USER = gql`
+  query GetUser {
+    me {
       id
+      name
+      email
+      goal
     }
   }
 `;
 
-export default function SignUp({
+const UPDATE_USER = gql`
+  mutation UpdateMe($userData: CreateUserDto!) {
+    updateMe(userData: $userData) {
+      id
+      name
+      email
+      goal
+    }
+  }
+`;
+
+export default function ProfileForm({
   dictionary,
 }: {
-  dictionary: Awaited<ReturnType<typeof getDictionary>>["signUp"];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>["profile"];
 }) {
-  const { body, footer } = dictionary;
-  const router = useRouter();
-
+  const { body } = dictionary;
   const [token] = useLocalStorage<string>("token");
-  useEffect(() => {
-    if (token) {
-      router.push("/");
-      toast.success(body.toast.success);
-    }
-  });
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [name, setName] = useState("");
   const [goal, setGoal] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const goalsValues = ["LEARN", "TEACH", "GROUP_STUDY"];
 
-  const [signUp, { loading }] = useMutation(SIGNUP_MUTATION, {
-    onCompleted: () => {
-      router.push("/login");
+  const { data, loading: loadingUser } = useQuery(GET_USER, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
     },
     onError: () => {
       toast.error(body.toast.error);
     },
   });
 
+  const [updateUser, { loading: updating }] = useMutation(UPDATE_USER, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      toast.success(body.toast.success);
+      setPassword("");
+      setConfirmPassword("");
+    },
+    update: (cache, { data: mutationData }) => {
+      const existingData = cache.readQuery({ query: GET_USER });
+      if (existingData) {
+        cache.writeQuery({
+          query: GET_USER,
+          data: {
+            me: {
+              ...mutationData.updateMe,
+            },
+          },
+        });
+      }
+    },
+    onError: () => {
+      toast.error(body.toast.error);
+    },
+  });
+
+  useEffect(() => {
+    if (data?.me) {
+      setName(data.me.name);
+      setGoal(data.me.goal);
+    }
+  }, [data]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (password && password !== confirmPassword) {
       toast.error(body.toast.diffPassword);
       return;
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
-    if (!passwordRegex.test(password)) {
-      toast.error(body.toast.passwordError);
-      return;
+    if (password) {
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,12}$/;
+      if (!passwordRegex.test(password)) {
+        toast.error(body.toast.passwordError);
+        return;
+      }
     }
 
-    signUp({ variables: { createUserData: { email, name, password, goal } } });
+    updateUser({
+      variables: {
+        userData: {
+          name,
+          goal,
+          ...(password && { password }),
+        },
+      },
+    });
   };
+
+  if (loadingUser) {
+    return (
+      <div className="flex min-h-screen bg-gray-100">
+        <div className="w-full bg-[#FFFFFF] p-15 pt-10 pb-2 md:w-1/2">
+          <h1 className="text-black text-center text-4xl mb-6 md:text-left">
+            {body.title}
+          </h1>
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div className="h-10 bg-gray-200 rounded w-2/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div className="h-10 bg-gray-200 rounded w-2/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div className="h-10 bg-gray-200 rounded w-2/3 mb-4"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="w-full bg-[#FFFFFF] p-15 pt-10 pb-2  md:w-1/2">
+      <div className="w-full bg-[#FFFFFF] p-15 pt-10 pb-2">
         <h1 className="text-black text-center text-4xl mb-6 md:text-left">
           {body.title}
         </h1>
         <form onSubmit={handleSubmit}>
+          <label
+            htmlFor="email"
+            className="block mb-2 text-sm font-medium text-black"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            className="bg-gray-100 border border-gray-300 text-gray-500 text-sm rounded-lg block w-full p-2.5 mb-5 md:w-2/3"
+            value={data?.me?.email || ""}
+            disabled
+          />
+
           <label
             htmlFor="name"
             className="block mb-2 text-sm font-medium text-black"
@@ -88,22 +173,6 @@ export default function SignUp({
               const value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
               setName(value);
             }}
-            required
-          />
-
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-black"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-5 md:w-2/3"
-            placeholder={body.email.placeholder}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
@@ -143,7 +212,6 @@ export default function SignUp({
             placeholder={body.password.placeholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
 
           <label
@@ -159,34 +227,16 @@ export default function SignUp({
             placeholder={body.confirmPassword.placeholder}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            required
           />
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={updating}
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 md:w-2/5"
           >
-            {loading ? body.submit.loading : body.submit.text}
+            {updating ? body.submit.loading : body.submit.text}
           </button>
         </form>
-        <div className="md:w-2/5">
-          <h2 className="text-center mt-5 text-black ">{footer.title}</h2>
-          <LocaleLink
-            className="text-center text-black underline text-blue-500 block hover:text-blue-700"
-            href="/login"
-          >
-            {footer.link}
-          </LocaleLink>
-        </div>
-      </div>
-      <div className="relative w-1/2 items-center justify-center hidden md:flex">
-        <Image
-          src="/images/sign-up.svg"
-          alt="Logo"
-          fill
-          style={{ objectFit: "contain" }}
-        />
       </div>
     </div>
   );

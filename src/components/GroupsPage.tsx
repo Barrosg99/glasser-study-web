@@ -2,9 +2,40 @@
 import { Users, Plus, X } from "lucide-react";
 import { getDictionary } from "@/dictionaries";
 import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+interface Group {
+  id: string;
+  name: string;
+  description: string;
+  members: {
+    id: string;
+    name: string;
+    email: string;
+  }[];
+}
+
+const GET_GROUPS = gql`
+  query GetGroups {
+    myGroups {
+      id
+      name
+      description
+      members {
+        id
+        name
+        email
+      }
+      moderator {
+        id
+        name
+        email
+      }
+    }
+  }
+`;
 
 const CREATE_GROUP_MUTATION = gql`
   mutation CreateGroup($createGroupData: CreateGroupDto!) {
@@ -22,10 +53,21 @@ export default function GroupsPage({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["groups"];
 }) {
   const [showModal, setShowModal] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState("");
   const [token] = useLocalStorage<string>("token");
+
+  const { data: groupsData, loading: loadingGroups } = useQuery<{
+    myGroups: Group[];
+  }>(GET_GROUPS, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
 
   const [createGroup, { loading }] = useMutation(CREATE_GROUP_MUTATION, {
     context: {
@@ -34,16 +76,35 @@ export default function GroupsPage({
       },
     },
     onCompleted: () => {
-      toast.success("Grupo criado com sucesso!");
+      toast.success(
+        selectedGroup
+          ? "Grupo atualizado com sucesso!"
+          : "Grupo criado com sucesso!"
+      );
       setShowModal(false);
-      setName("");
-      setDescription("");
-      setMembers("");
+      resetForm();
     },
     onError: () => {
-      toast.error("Erro ao criar grupo");
+      toast.error(
+        selectedGroup ? "Erro ao atualizar grupo" : "Erro ao criar grupo"
+      );
     },
+    refetchQueries: [{
+      query: GET_GROUPS,
+      context: {
+        headers: {
+          Authorization: token
+        }
+      }
+    }],
   });
+
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setMembers("");
+    setSelectedGroup(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,15 +123,30 @@ export default function GroupsPage({
     });
   };
 
+  const handleOpenModal = (group?: Group) => {
+    if (group) {
+      setSelectedGroup(group);
+      setName(group.name);
+      setDescription(group.description);
+      setMembers(group.members.map((member) => member.email).join(","));
+    } else {
+      resetForm();
+    }
+    setShowModal(true);
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Modal de criação de grupo */}
+      {/* Modal de criação/edição de grupo */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative">
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false);
+                resetForm();
+              }}
               aria-label="Fechar"
             >
               <X size={24} />
@@ -119,7 +195,13 @@ export default function GroupsPage({
                   disabled={loading}
                   className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition disabled:bg-gray-400"
                 >
-                  {loading ? "Criando..." : "Criar Grupo"}
+                  {loading
+                    ? selectedGroup
+                      ? "Atualizando..."
+                      : "Criando..."
+                    : selectedGroup
+                    ? "Atualizar Grupo"
+                    : "Criar Grupo"}
                 </button>
               </div>
             </form>
@@ -136,27 +218,32 @@ export default function GroupsPage({
           <button
             className="bg-[#990000] text-white px-4 py-2 rounded-full hover:bg-[#B22222] transition"
             type="button"
-            onClick={() => setShowModal(true)}
+            onClick={() => handleOpenModal()}
           >
             <Plus size={20} />
           </button>
         </div>
         <ul className="">
-          {[1, 2, 3, 4].length === 0 ? (
+          {loadingGroups ? (
+            <li className="flex items-center justify-center p-4 text-gray-500">
+              Carregando grupos...
+            </li>
+          ) : groupsData?.myGroups?.length === 0 ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
               Você não tem grupos ainda, tente criar um...
             </li>
           ) : (
-            [1, 2, 3, 4].map((i) => (
+            groupsData?.myGroups?.map((group) => (
               <li
-                key={i}
+                key={group.id}
                 className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 cursor-pointer transition-colors duration-200"
+                onClick={() => handleOpenModal(group)}
               >
                 <Users size={32} className="text-gray-500 mt-1" />
                 <div>
-                  <div className="font-medium text-gray-400">Nome do grupo</div>
+                  <div className="font-medium text-gray-400">{group.name}</div>
                   <div className="text-sm text-gray-700">
-                    Breve descrição do grupo
+                    {group.description}
                   </div>
                 </div>
               </li>

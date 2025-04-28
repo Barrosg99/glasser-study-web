@@ -15,6 +15,7 @@ interface Group {
     name: string;
     email: string;
   }[];
+  isModerator: boolean;
 }
 
 const GET_GROUPS = gql`
@@ -28,11 +29,7 @@ const GET_GROUPS = gql`
         name
         email
       }
-      moderator {
-        id
-        name
-        email
-      }
+      isModerator
     }
   }
 `;
@@ -89,14 +86,16 @@ export default function GroupsPage({
         selectedGroup ? "Erro ao atualizar grupo" : "Erro ao criar grupo"
       );
     },
-    refetchQueries: [{
-      query: GET_GROUPS,
-      context: {
-        headers: {
-          Authorization: token
-        }
-      }
-    }],
+    refetchQueries: [
+      {
+        query: GET_GROUPS,
+        context: {
+          headers: {
+            Authorization: token,
+          },
+        },
+      },
+    ],
   });
 
   const resetForm = () => {
@@ -154,27 +153,30 @@ export default function GroupsPage({
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
-                  Nome do Grupo<span className="text-red-600">*</span>
+                  Nome do Grupo<span className="text-red-600"> *</span>
                 </label>
                 <input
                   type="text"
-                  className="w-full border rounded px-3 py-2 text-black bg-gray-50"
+                  className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="Ex.: Matemática, Biologia"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  disabled={selectedGroup?.isModerator === false}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
                   Descrição<span className="text-red-600">*</span>
                 </label>
-                <textarea
-                  className="w-full border rounded px-3 py-2 text-black bg-gray-50"
+                <input
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="Descreva o que é o material de forma clara e objetiva."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
+                  disabled={selectedGroup?.isModerator === false}
                 />
               </div>
               <div>
@@ -183,16 +185,17 @@ export default function GroupsPage({
                 </label>
                 <input
                   type="text"
-                  className="w-full border rounded px-3 py-2 text-black bg-gray-50"
+                  className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   placeholder="E-mails dos membros separados por vírgula"
                   value={members}
                   onChange={(e) => setMembers(e.target.value)}
+                  disabled={selectedGroup?.isModerator === false}
                 />
               </div>
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || selectedGroup?.isModerator === false}
                   className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition disabled:bg-gray-400"
                 >
                   {loading

@@ -209,10 +209,18 @@ export default function GroupsPage({
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Modal de criação/edição de grupo */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => {
+            setShowModal(false);
+            resetForm();
+          }}
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => {
@@ -338,7 +346,6 @@ export default function GroupsPage({
           )}
         </ul>
       </aside>
-      {/* Main content */}
       <main className="flex-1 bg-gray-300 m-4 rounded"></main>
     </div>
   );

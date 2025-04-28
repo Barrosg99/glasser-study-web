@@ -34,12 +34,18 @@ const GET_GROUPS = gql`
   }
 `;
 
-const CREATE_GROUP_MUTATION = gql`
-  mutation CreateGroup($createGroupData: CreateGroupDto!) {
-    createGroup(createGroupData: $createGroupData) {
+const SAVE_GROUP_MUTATION = gql`
+  mutation SaveGroup($saveGroupData: CreateGroupDto!, $id: String) {
+    saveGroup(saveGroupData: $saveGroupData, id: $id) {
       id
-      name
-      description
+    }
+  }
+`;
+
+const DELETE_GROUP_MUTATION = gql`
+  mutation RemoveGroup($id: String!) {
+    removeGroup(id: $id) {
+      id
     }
   }
 `;
@@ -54,6 +60,7 @@ export default function GroupsPage({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const [token] = useLocalStorage<string>("token");
 
   const { data: groupsData, loading: loadingGroups } = useQuery<{
@@ -66,7 +73,7 @@ export default function GroupsPage({
     },
   });
 
-  const [createGroup, { loading }] = useMutation(CREATE_GROUP_MUTATION, {
+  const [saveGroup, { loading }] = useMutation(SAVE_GROUP_MUTATION, {
     context: {
       headers: {
         Authorization: token,
@@ -98,6 +105,69 @@ export default function GroupsPage({
     ],
   });
 
+  const [deleteGroup] = useMutation(DELETE_GROUP_MUTATION, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      toast.success("Grupo removido com sucesso!");
+      setShowModal(false);
+    },
+    onError: () => {
+      toast.error("Erro ao remover grupo");
+    },
+    refetchQueries: [
+      {
+        query: GET_GROUPS,
+        context: {
+          headers: {
+            Authorization: token,
+          },
+        },
+      },
+    ],
+  });
+
+  const handleDeleteGroup = async (groupId: string) => {
+    if (isDeleting) return;
+    
+    setIsDeleting(true);
+    setTimeout(() => setIsDeleting(false), 2000);
+    toast(
+      (t) => (
+        <span className="flex gap-4">
+          <span>Tem certeza que deseja remover este grupo?</span>
+          <button
+            onClick={() => {
+              deleteGroup({
+                variables: {
+                  id: groupId,
+                },
+              });
+              toast.dismiss(t.id);
+              setShowModal(false);
+            }}
+            className="text-blue-500 hover:text-blue-700"
+          >
+            Sim
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="text-red-500 hover:text-red-700"
+          >
+            Não
+          </button>
+        </span>
+      ),
+      {
+        position: "bottom-center",
+        duration: 2000,
+      }
+    );
+  };
+
   const resetForm = () => {
     setName("");
     setDescription("");
@@ -108,9 +178,9 @@ export default function GroupsPage({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    createGroup({
+    saveGroup({
       variables: {
-        createGroupData: {
+        saveGroupData: {
           name,
           description,
           memberEmails: members
@@ -118,6 +188,7 @@ export default function GroupsPage({
             .map((email) => email.trim())
             .filter(Boolean),
         },
+        id: selectedGroup?.id,
       },
     });
   };
@@ -192,7 +263,16 @@ export default function GroupsPage({
                   disabled={selectedGroup?.isModerator === false}
                 />
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-4">
+                {selectedGroup?.isModerator && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteGroup(selectedGroup.id)}
+                    className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
+                  >
+                    Remover Grupo
+                  </button>
+                )}
                 <button
                   type="submit"
                   disabled={loading || selectedGroup?.isModerator === false}
@@ -243,7 +323,7 @@ export default function GroupsPage({
                 onClick={() => handleOpenModal(group)}
               >
                 <Users size={32} className="text-gray-500 mt-1" />
-                <div>
+                <div className="flex-1">
                   <div className="font-medium text-gray-400">{group.name}</div>
                   <div className="text-sm text-gray-700">
                     {group.description}

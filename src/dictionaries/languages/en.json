@@ -4,7 +4,8 @@
     "signUp": "Sign Up",
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
-    "profile": "Profile"
+    "profile": "Profile",
+    "groups": "Groups"
   },
   "home": {
     "body": {
@@ -81,11 +82,11 @@
         "placeholder": "Confirm new password"
       },
       "submit": { "loading": "Updating...", "text": "Update Profile" }
-    },
-    "groups": {
-      "search": {
-        "placeholder": "Search for a group..."
-      }
+    }
+  },
+  "groups": {
+    "search": {
+      "placeholder": "Search for a group..."
     }
   }
 }

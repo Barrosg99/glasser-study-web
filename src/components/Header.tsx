@@ -4,7 +4,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { getDictionary } from "@/dictionaries";
 import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -18,10 +18,25 @@ export default function Header({
 }) {
   const [token, setToken] = useLocalStorage<string>("token");
   const [hasMounted, setHasMounted] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   if (!hasMounted)
@@ -59,11 +74,10 @@ export default function Header({
           )}
           {token && (
             <>
-              <div className="relative">
+              <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => {
-                    const menu = document.getElementById("user-menu");
-                    menu?.classList.toggle("hidden");
+                    setIsMenuOpen(!isMenuOpen);
                   }}
                   className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
                 >
@@ -71,7 +85,9 @@ export default function Header({
                 </button>
                 <div
                   id="user-menu"
-                  className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                  className={`${
+                    isMenuOpen ? "block" : "hidden"
+                  } absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50`}
                 >
                   <LocaleLink
                     href="/profile"
@@ -79,12 +95,17 @@ export default function Header({
                   >
                     {dictionary.profile}
                   </LocaleLink>
+                  <LocaleLink
+                    href="/groups"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {dictionary.groups}
+                  </LocaleLink>
                   <button
                     onClick={() => {
                       setToken(undefined);
                       toast.success(dictionary.logoutSuccess);
-                      const menu = document.getElementById("user-menu");
-                      menu?.classList.add("hidden");
+                      setIsMenuOpen(false);
                       router.push("/login");
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

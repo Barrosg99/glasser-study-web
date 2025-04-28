@@ -2,6 +2,19 @@
 import { Users, Plus, X } from "lucide-react";
 import { getDictionary } from "@/dictionaries";
 import { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import { toast } from "react-hot-toast";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+const CREATE_GROUP_MUTATION = gql`
+  mutation CreateGroup($createGroupData: CreateGroupDto!) {
+    createGroup(createGroupData: $createGroupData) {
+      id
+      name
+      description
+    }
+  }
+`;
 
 export default function GroupsPage({
   dictionary,
@@ -9,6 +22,45 @@ export default function GroupsPage({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["groups"];
 }) {
   const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [members, setMembers] = useState("");
+  const [token] = useLocalStorage<string>("token");
+
+  const [createGroup, { loading }] = useMutation(CREATE_GROUP_MUTATION, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      toast.success("Grupo criado com sucesso!");
+      setShowModal(false);
+      setName("");
+      setDescription("");
+      setMembers("");
+    },
+    onError: () => {
+      toast.error("Erro ao criar grupo");
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    createGroup({
+      variables: {
+        createGroupData: {
+          name,
+          description,
+          memberEmails: members
+            .split(",")
+            .map((email) => email.trim())
+            .filter(Boolean),
+        },
+      },
+    });
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -23,7 +75,7 @@ export default function GroupsPage({
             >
               <X size={24} />
             </button>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
                   Nome do Grupo<span className="text-red-600">*</span>
@@ -32,6 +84,8 @@ export default function GroupsPage({
                   type="text"
                   className="w-full border rounded px-3 py-2 text-black bg-gray-50"
                   placeholder="Ex.: Matemática, Biologia"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
@@ -42,6 +96,8 @@ export default function GroupsPage({
                 <textarea
                   className="w-full border rounded px-3 py-2 text-black bg-gray-50"
                   placeholder="Descreva o que é o material de forma clara e objetiva."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   required
                 />
               </div>
@@ -50,17 +106,20 @@ export default function GroupsPage({
                   Membros
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="w-full border rounded px-3 py-2 text-black bg-gray-50"
-                  placeholder="E-mail dos membros a convidar"
+                  placeholder="E-mails dos membros separados por vírgula"
+                  value={members}
+                  onChange={(e) => setMembers(e.target.value)}
                 />
               </div>
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition"
+                  disabled={loading}
+                  className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition disabled:bg-gray-400"
                 >
-                  Criar Grupo
+                  {loading ? "Criando..." : "Criar Grupo"}
                 </button>
               </div>
             </form>

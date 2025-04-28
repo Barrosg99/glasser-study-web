@@ -4,7 +4,8 @@
     "signUp": "Cadastrar",
     "logout": "Sair",
     "logoutSuccess": "Deslogado com sucesso",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "groups": "Grupos"
   },
   "home": {
     "body": {

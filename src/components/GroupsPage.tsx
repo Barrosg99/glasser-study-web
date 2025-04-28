@@ -82,15 +82,17 @@ export default function GroupsPage({
     onCompleted: () => {
       toast.success(
         selectedGroup
-          ? "Grupo atualizado com sucesso!"
-          : "Grupo criado com sucesso!"
+          ? dictionary.toast.updateSuccess
+          : dictionary.toast.createSuccess
       );
       setShowModal(false);
       resetForm();
     },
     onError: () => {
       toast.error(
-        selectedGroup ? "Erro ao atualizar grupo" : "Erro ao criar grupo"
+        selectedGroup
+          ? dictionary.toast.updateError
+          : dictionary.toast.createError
       );
     },
     refetchQueries: [
@@ -112,11 +114,11 @@ export default function GroupsPage({
       },
     },
     onCompleted: () => {
-      toast.success("Grupo removido com sucesso!");
+      toast.success(dictionary.toast.deleteSuccess);
       setShowModal(false);
     },
     onError: () => {
-      toast.error("Erro ao remover grupo");
+      toast.error(dictionary.toast.deleteError);
     },
     refetchQueries: [
       {
@@ -132,13 +134,13 @@ export default function GroupsPage({
 
   const handleDeleteGroup = async (groupId: string) => {
     if (isDeleting) return;
-    
+
     setIsDeleting(true);
     setTimeout(() => setIsDeleting(false), 2000);
     toast(
       (t) => (
         <span className="flex gap-4">
-          <span>Tem certeza que deseja remover este grupo?</span>
+          <span>{dictionary.toast.deleteConfirm}</span>
           <button
             onClick={() => {
               deleteGroup({
@@ -151,13 +153,13 @@ export default function GroupsPage({
             }}
             className="text-blue-500 hover:text-blue-700"
           >
-            Sim
+            {dictionary.toast.deleteConfirmYes}
           </button>
           <button
             onClick={() => toast.dismiss(t.id)}
             className="text-red-500 hover:text-red-700"
           >
-            Não
+            {dictionary.toast.deleteConfirmNo}
           </button>
         </span>
       ),
@@ -224,12 +226,13 @@ export default function GroupsPage({
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
-                  Nome do Grupo<span className="text-red-600"> *</span>
+                  {dictionary.create.name.label}
+                  <span className="text-red-600"> *</span>
                 </label>
                 <input
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="Ex.: Matemática, Biologia"
+                  placeholder={dictionary.create.name.placeholder}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -238,12 +241,13 @@ export default function GroupsPage({
               </div>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
-                  Descrição<span className="text-red-600">*</span>
+                  {dictionary.create.description.label}
+                  <span className="text-red-600"> *</span>
                 </label>
                 <input
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="Descreva o que é o material de forma clara e objetiva."
+                  placeholder={dictionary.create.description.placeholder}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
@@ -252,12 +256,12 @@ export default function GroupsPage({
               </div>
               <div>
                 <label className="block text-sm font-medium text-black mb-1">
-                  Membros
+                  {dictionary.create.members.label}
                 </label>
                 <input
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="E-mails dos membros separados por vírgula"
+                  placeholder={dictionary.create.members.placeholder}
                   value={members}
                   onChange={(e) => setMembers(e.target.value)}
                   disabled={selectedGroup?.isModerator === false}
@@ -270,7 +274,7 @@ export default function GroupsPage({
                     onClick={() => handleDeleteGroup(selectedGroup.id)}
                     className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
                   >
-                    Remover Grupo
+                    {dictionary.create.delete}
                   </button>
                 )}
                 <button
@@ -280,11 +284,11 @@ export default function GroupsPage({
                 >
                   {loading
                     ? selectedGroup
-                      ? "Atualizando..."
-                      : "Criando..."
+                      ? dictionary.create.submit.updating
+                      : dictionary.create.submit.creating
                     : selectedGroup
-                    ? "Atualizar Grupo"
-                    : "Criar Grupo"}
+                    ? dictionary.create.submit.update
+                    : dictionary.create.submit.create}
                 </button>
               </div>
             </form>
@@ -309,11 +313,11 @@ export default function GroupsPage({
         <ul className="">
           {loadingGroups ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
-              Carregando grupos...
+              {dictionary.list.loading}
             </li>
           ) : groupsData?.myGroups?.length === 0 ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
-              Você não tem grupos ainda, tente criar um...
+              {dictionary.list.empty}
             </li>
           ) : (
             groupsData?.myGroups?.map((group) => (

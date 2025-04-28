@@ -3,7 +3,8 @@
     "login": "Login",
     "signUp": "Sign Up",
     "logout": "Logout",
-    "logoutSuccess": "Logged out successfully"
+    "logoutSuccess": "Logged out successfully",
+    "profile": "Profile"
   },
   "home": {
     "body": {
@@ -54,6 +55,32 @@
     "footer": {
       "title": "Already have an account?",
       "link": "Login"
+    }
+  },
+  "profile": {
+    "body": {
+      "title": "Edit Profile",
+      "toast": {
+        "success": "Profile updated successfully",
+        "error": "Error updating profile",
+        "diffPassword": "Passwords do not match",
+        "passwordError": "Password must be between 8 and 12 characters, including letters and numbers"
+      },
+      "name": { "label": "Name", "placeholder": "Enter your name" },
+      "goal": {
+        "label": "Goal",
+        "placeholder": "Enter your goal",
+        "options": ["Learn", "Teach", "Group Study"]
+      },
+      "password": {
+        "label": "New Password",
+        "placeholder": "Enter new password"
+      },
+      "confirmPassword": {
+        "label": "Confirm New Password",
+        "placeholder": "Confirm new password"
+      },
+      "submit": { "loading": "Updating...", "text": "Update Profile" }
     }
   }
 }

@@ -4,7 +4,8 @@
     "signUp": "Sign Up",
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
-    "profile": "Profile"
+    "profile": "Profile",
+    "groups": "Groups"
   },
   "home": {
     "body": {
@@ -81,6 +82,48 @@
         "placeholder": "Confirm new password"
       },
       "submit": { "loading": "Updating...", "text": "Update Profile" }
+    }
+  },
+  "groups": {
+    "search": {
+      "placeholder": "Search for a group..."
+    },
+    "create": {
+      "title": "Create Group",
+      "name": {
+        "label": "Group Name",
+        "placeholder": "Ex.: Mathematics, Biology"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe the material clearly and objectively."
+      },
+      "members": {
+        "label": "Members",
+        "placeholder": "Member emails separated by comma"
+      },
+      "submit": {
+        "create": "Create Group",
+        "update": "Update Group",
+        "creating": "Creating...",
+        "updating": "Updating..."
+      },
+      "delete": "Remove Group"
+    },
+    "list": {
+      "loading": "Loading groups...",
+      "empty": "You don't have any groups yet, try creating one..."
+    },
+    "toast": {
+      "createSuccess": "Group created successfully!",
+      "updateSuccess": "Group updated successfully!",
+      "deleteSuccess": "Group removed successfully!",
+      "createError": "Error creating group",
+      "updateError": "Error updating group",
+      "deleteError": "Error removing group",
+      "deleteConfirm": "Are you sure you want to remove this group?",
+      "deleteConfirmYes": "Yes",
+      "deleteConfirmNo": "No"
     }
   }
 }

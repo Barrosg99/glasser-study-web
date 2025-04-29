@@ -4,7 +4,8 @@
     "signUp": "Cadastrar",
     "logout": "Sair",
     "logoutSuccess": "Deslogado com sucesso",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "groups": "Grupos"
   },
   "home": {
     "body": {
@@ -78,6 +79,48 @@
         "placeholder": "Confirme nova senha"
       },
       "submit": { "loading": "Atualizando...", "text": "Atualizar Perfil" }
+    }
+  },
+  "groups": {
+    "search": {
+      "placeholder": "Com quem quer falar?"
+    },
+    "create": {
+      "title": "Criar Grupo",
+      "name": {
+        "label": "Nome do Grupo",
+        "placeholder": "Ex.: Matemática, Biologia"
+      },
+      "description": {
+        "label": "Descrição",
+        "placeholder": "Descreva o que é o material de forma clara e objetiva."
+      },
+      "members": {
+        "label": "Membros",
+        "placeholder": "E-mails dos membros separados por vírgula"
+      },
+      "submit": {
+        "create": "Criar Grupo",
+        "update": "Atualizar Grupo",
+        "creating": "Criando...",
+        "updating": "Atualizando..."
+      },
+      "delete": "Remover Grupo"
+    },
+    "list": {
+      "loading": "Carregando grupos...",
+      "empty": "Você não tem grupos ainda, tente criar um..."
+    },
+    "toast": {
+      "createSuccess": "Grupo criado com sucesso!",
+      "updateSuccess": "Grupo atualizado com sucesso!",
+      "deleteSuccess": "Grupo removido com sucesso!",
+      "createError": "Erro ao criar grupo",
+      "updateError": "Erro ao atualizar grupo",
+      "deleteError": "Erro ao remover grupo",
+      "deleteConfirm": "Tem certeza que deseja remover este grupo?",
+      "deleteConfirmYes": "Sim",
+      "deleteConfirmNo": "Não"
     }
   }
 }

@@ -22,22 +22,21 @@ export default function PostModal({
   onClose,
   onSubmit,
 }: PostModalProps) {
-  const [showMaterialFields, setShowMaterialFields] = useState(false);
+  const [materials, setMaterials] = useState<
+    { name: string; link: string; type: string }[]
+  >([]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-    const materials = showMaterialFields
-      ? [
-          {
-            name: formData.get("materialName") as string,
-            link: formData.get("materialLink") as string,
-            type: formData.get("materialType") as string,
-          },
-        ]
-      : undefined;
+
+    const formMaterials = materials.map((material, index) => ({
+      name: formData.get(`materialName${index}`) as string,
+      link: formData.get(`materialLink${index}`) as string,
+      type: formData.get(`materialType${index}`) as string,
+    }));
 
     onSubmit({
       subject: formData.get("subject") as string,
@@ -46,7 +45,7 @@ export default function PostModal({
       tags: (formData.get("tags") as string)
         .split(",")
         .map((tag) => tag.trim()),
-      materials,
+      materials: formMaterials.length > 0 ? formMaterials : undefined,
     });
   };
 
@@ -54,6 +53,16 @@ export default function PostModal({
     if (e.target === e.currentTarget) {
       onClose();
     }
+  };
+
+  const addMaterial = () => {
+    if (materials.length < 3) {
+      setMaterials([...materials, { name: "", link: "", type: "" }]);
+    }
+  };
+
+  const removeMaterial = (index: number) => {
+    setMaterials(materials.filter((_, i) => i !== index));
   };
 
   return (
@@ -113,16 +122,8 @@ export default function PostModal({
             />
           </div>
 
-          <button
-            type="button"
-            className="text-[#990000] text-sm shadow-md p-2 hover:bg-gray-200 rounded-lg"
-            onClick={() => setShowMaterialFields(true)}
-          >
-            Adicionar material
-          </button>
-
-          {showMaterialFields && (
-            <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+          {materials.map((_, index) => (
+            <div key={index} className="space-y-4 p-4 bg-gray-50 rounded-lg">
               <div className="flex gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-black mb-2">
@@ -130,10 +131,10 @@ export default function PostModal({
                   </label>
                   <input
                     type="text"
-                    name="materialName"
+                    name={`materialName${index}`}
                     placeholder="Ex: Exercícios de Trigonometria"
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    required={showMaterialFields}
+                    required
                   />
                 </div>
 
@@ -143,10 +144,10 @@ export default function PostModal({
                   </label>
                   <input
                     type="url"
-                    name="materialLink"
+                    name={`materialLink${index}`}
                     placeholder="URL do material"
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    required={showMaterialFields}
+                    required
                   />
                 </div>
 
@@ -155,9 +156,9 @@ export default function PostModal({
                     Tipo*
                   </label>
                   <select
-                    name="materialType"
+                    name={`materialType${index}`}
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    required={showMaterialFields}
+                    required
                   >
                     <option value="">Selecione o tipo de material</option>
                     <option value="document">Documento</option>
@@ -168,7 +169,24 @@ export default function PostModal({
                   </select>
                 </div>
               </div>
+              <button
+                type="button"
+                className="text-[#990000] text-sm shadow-md p-2 hover:bg-gray-200 rounded-lg"
+                onClick={() => removeMaterial(index)}
+              >
+                Remover material
+              </button>
             </div>
+          ))}
+
+          {materials.length < 3 && (
+            <button
+              type="button"
+              className="text-[#990000] text-sm shadow-md p-2 hover:bg-gray-200 rounded-lg"
+              onClick={addMaterial}
+            >
+              Adicionar material
+            </button>
           )}
 
           <div>
@@ -187,7 +205,7 @@ export default function PostModal({
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="bg-[#990000] text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300"
+              className="bg-[#990000] text-white py-2 px-6 rounded-lg hover:bg-[#B22222] transition duration-300"
             >
               Publicar
             </button>

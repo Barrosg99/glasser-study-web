@@ -5,7 +5,8 @@
     "logout": "Sair",
     "logoutSuccess": "Deslogado com sucesso",
     "profile": "Perfil",
-    "groups": "Grupos"
+    "groups": "Grupos",
+    "posts": "Fórum"
   },
   "home": {
     "body": {

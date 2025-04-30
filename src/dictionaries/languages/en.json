@@ -5,7 +5,8 @@
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
     "profile": "Profile",
-    "groups": "Groups"
+    "groups": "Groups",
+    "posts": "Forum"
   },
   "home": {
     "body": {

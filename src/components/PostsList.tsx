@@ -13,11 +13,20 @@ interface Post {
   tags: string[];
 }
 
-interface PostsListProps {
-  posts: Post[];
-}
+// This is temporary mock data - should be replaced with real API calls
+const mockPosts: Post[] = [
+  {
+    id: "1",
+    subject: "Nome da Disciplina",
+    title: "Título da Dúvida",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+    date: "14 Feb 2024",
+    tags: ["Discussão", "Pergunta", "Dúvida"],
+  },
+  // Add more mock posts as needed
+];
 
-export default function PostsList({ posts }: PostsListProps) {
+export default function PostsList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (data: {
@@ -51,7 +60,7 @@ export default function PostsList({ posts }: PostsListProps) {
         />
 
         <div className="space-y-6">
-          {posts.map((post) => (
+          {mockPosts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>

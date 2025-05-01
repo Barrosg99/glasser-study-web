@@ -123,5 +123,48 @@
       "deleteConfirmYes": "Sim",
       "deleteConfirmNo": "Não"
     }
+  },
+  "posts": {
+    "list": {
+      "title": "Fórum",
+      "newPost": "Nova Publicação"
+    },
+    "modal": {
+      "subject": "Disciplina",
+      "title": "Título",
+      "description": "Descrição",
+      "tags": "Tags",
+      "materials": {
+        "title": "Materiais",
+        "name": "Nome do Material",
+        "link": "Link",
+        "type": "Tipo",
+        "add": "Adicionar material",
+        "remove": "Remover material",
+        "types": {
+          "select": "Selecione o tipo de material",
+          "article": "Artigo",
+          "exercise": "Exercícios",
+          "podcast": "Podcast",
+          "summary": "Resumo",
+          "simulator": "Simulado",
+          "video": "Vídeo",
+          "other": "Outro"
+        }
+      },
+      "submit": {
+        "create": "Publicar",
+        "update": "Atualizar",
+        "remove": "Remover Publicação"
+      },
+      "toast": {
+        "createSuccess": "Publicação criada com sucesso",
+        "updateSuccess": "Publicação atualizada com sucesso",
+        "removeSuccess": "Publicação removida com sucesso",
+        "createError": "Erro ao criar publicação",
+        "updateError": "Erro ao atualizar publicação",
+        "removeError": "Erro ao remover publicação"
+      }
+    }
   }
 }

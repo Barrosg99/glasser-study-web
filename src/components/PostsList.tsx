@@ -5,6 +5,7 @@ import { useState } from "react";
 import PostModal from "./PostModal";
 import { gql, useQuery } from "@apollo/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { getDictionary } from "@/dictionaries";
 
 export interface Post {
   id: string;
@@ -51,7 +52,11 @@ const GET_POSTS = gql`
   }
 `;
 
-export default function PostsList() {
+export default function PostsList({
+  dictionary,
+}: {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>["posts"];
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [token] = useLocalStorage<string>("token");
@@ -59,7 +64,7 @@ export default function PostsList() {
   const { data: postsData } = useQuery<{
     posts: Post[];
   }>(GET_POSTS, {
-    // pollInterval: 1000,
+    pollInterval: 1000,
     context: {
       headers: {
         Authorization: token,
@@ -71,12 +76,14 @@ export default function PostsList() {
     <main className="min-h-screen bg-gray-50 pt-20 text-black">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-black text-2xl font-bold">Fórum Colaborativo</h1>
+          <h1 className="text-black text-2xl font-bold">
+            {dictionary.list.title}
+          </h1>
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-[#990000] text-white px-4 py-2 rounded-md hover:bg-[#B22222] transition duration-300"
           >
-            Nova Publicação
+            {dictionary.list.newPost}
           </button>
         </div>
 
@@ -87,6 +94,7 @@ export default function PostsList() {
             setSelectedPost(null);
           }}
           post={selectedPost}
+          dictionary={dictionary.modal}
         />
 
         <div className="space-y-6">

@@ -4,11 +4,13 @@ import { gql, useMutation } from "@apollo/client";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { getDictionary } from "@/dictionaries";
 
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
   post?: Post | null;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>["posts"]["modal"];
 }
 
 const SAVE_POST_MUTATION = gql`
@@ -27,7 +29,12 @@ const REMOVE_POST_MUTATION = gql`
   }
 `;
 
-export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
+export default function PostModal({
+  isOpen,
+  onClose,
+  post,
+  dictionary,
+}: PostModalProps) {
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -71,11 +78,15 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
       },
     },
     onCompleted: () => {
-      toast.success("Publicação criada com sucesso");
+      toast.success(
+        post ? dictionary.toast.updateSuccess : dictionary.toast.createSuccess
+      );
       onClose();
     },
     onError: () => {
-      toast.error("Erro ao criar publicação");
+      toast.error(
+        post ? dictionary.toast.updateError : dictionary.toast.createError
+      );
     },
   });
 
@@ -86,17 +97,19 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
       },
     },
     onCompleted: () => {
-      toast.success("Publicação removida com sucesso");
+      toast.success(dictionary.toast.removeSuccess);
       onClose();
     },
     onError: () => {
-      toast.error("Erro ao remover publicação");
+      toast.error(dictionary.toast.removeError);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const toastId = toast.loading("Publicando...");
+    const toastId = toast.loading(
+      post ? dictionary.submit.update : dictionary.submit.create
+    );
 
     savePost({
       variables: {
@@ -121,7 +134,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
   const handleRemovePost = () => {
     if (post?.id) {
-      const toastId = toast.loading("Removendo...");
+      const toastId = toast.loading(dictionary.submit.remove);
 
       removePost({
         variables: { id: post.id },
@@ -169,7 +182,8 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-black mb-2">
-                Disciplina<span className="text-red-500"> *</span>
+                {dictionary.subject}
+                <span className="text-red-500"> *</span>
               </label>
               <input
                 type="text"
@@ -183,7 +197,8 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-black mb-2">
-                Título<span className="text-red-500"> *</span>
+                {dictionary.title}
+                <span className="text-red-500"> *</span>
               </label>
               <input
                 type="text"
@@ -198,7 +213,8 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
           <div>
             <label className="block text-sm font-medium text-black mb-2">
-              Descrição<span className="text-red-500"> *</span>
+              {dictionary.description}
+              <span className="text-red-500"> *</span>
             </label>
             <textarea
               value={description}
@@ -214,7 +230,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               <div className="flex gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-black mb-2">
-                    Nome do Material*
+                    {dictionary.materials.name}*
                   </label>
                   <input
                     type="text"
@@ -230,7 +246,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-black mb-2">
-                    Link*
+                    {dictionary.materials.link}*
                   </label>
                   <input
                     type="url"
@@ -246,7 +262,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-black mb-2">
-                    Tipo*
+                    {dictionary.materials.type}*
                   </label>
                   <select
                     value={material.type}
@@ -256,14 +272,30 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   >
-                    <option value="">Selecione o tipo de material</option>
-                    <option value="ARTICLE">Artigo</option>
-                    <option value="EXERCISE">Exercícios</option>
-                    <option value="PODCAST">Podcast</option>
-                    <option value="SUMMARY">Resumo</option>
-                    <option value="SIMULATOR">Simulado</option>
-                    <option value="VIDEO">Vídeo</option>
-                    <option value="OTHER">Outro</option>
+                    <option value="">
+                      {dictionary.materials.types.select}
+                    </option>
+                    <option value="ARTICLE">
+                      {dictionary.materials.types.article}
+                    </option>
+                    <option value="EXERCISE">
+                      {dictionary.materials.types.exercise}
+                    </option>
+                    <option value="PODCAST">
+                      {dictionary.materials.types.podcast}
+                    </option>
+                    <option value="SUMMARY">
+                      {dictionary.materials.types.summary}
+                    </option>
+                    <option value="SIMULATOR">
+                      {dictionary.materials.types.simulator}
+                    </option>
+                    <option value="VIDEO">
+                      {dictionary.materials.types.video}
+                    </option>
+                    <option value="OTHER">
+                      {dictionary.materials.types.other}
+                    </option>
                   </select>
                 </div>
               </div>
@@ -272,7 +304,7 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                 className="text-[#990000] text-sm shadow-md p-2 hover:bg-gray-200 rounded-lg"
                 onClick={() => removeMaterial(index)}
               >
-                Remover material
+                {dictionary.materials.remove}
               </button>
             </div>
           ))}
@@ -283,13 +315,14 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               className="text-[#990000] text-sm shadow-md p-2 hover:bg-gray-200 rounded-lg"
               onClick={addMaterial}
             >
-              Adicionar material
+              {dictionary.materials.add}
             </button>
           )}
 
           <div>
             <label className="block text-sm font-medium text-black mb-2">
-              Tags<span className="text-red-500"> *</span>
+              {dictionary.tags}
+              <span className="text-red-500"> *</span>
             </label>
             <input
               type="text"
@@ -308,14 +341,14 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                 className="bg-[#990000] text-white py-2 px-6 rounded-lg hover:bg-[#B22222] transition duration-300"
                 onClick={handleRemovePost}
               >
-                Remover Publicação
+                {dictionary.submit.remove}
               </button>
             )}
             <button
               type="submit"
               className="bg-[#990000] text-white py-2 px-6 rounded-lg hover:bg-[#B22222] transition duration-300"
             >
-              {post ? "Atualizar" : "Publicar"}
+              {post ? dictionary.submit.update : dictionary.submit.create}
             </button>
           </div>
         </form>

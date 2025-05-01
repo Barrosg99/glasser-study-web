@@ -126,5 +126,48 @@
       "deleteConfirmYes": "Yes",
       "deleteConfirmNo": "No"
     }
+  },
+  "posts": {
+    "list": {
+      "title": "Forum",
+      "newPost": "New Post"
+    },
+    "modal": {
+      "subject": "Subject",
+      "title": "Title",
+      "description": "Description",
+      "tags": "Tags",
+      "materials": {
+        "title": "Materials",
+        "name": "Material Name",
+        "link": "Link",
+        "type": "Type",
+        "add": "Add material",
+        "remove": "Remove material",
+        "types": {
+          "select": "Select material type",
+          "article": "Article",
+          "exercise": "Exercise",
+          "podcast": "Podcast",
+          "summary": "Summary",
+          "simulator": "Simulator",
+          "video": "Video",
+          "other": "Other"
+        }
+      },
+      "submit": {
+        "create": "Publish",
+        "update": "Update",
+        "remove": "Remove Post"
+      },
+      "toast": {
+        "createSuccess": "Post created successfully",
+        "updateSuccess": "Post updated successfully",
+        "removeSuccess": "Post removed successfully",
+        "createError": "Error creating post",
+        "updateError": "Error updating post",
+        "removeError": "Error removing post"
+      }
+    }
   }
 }

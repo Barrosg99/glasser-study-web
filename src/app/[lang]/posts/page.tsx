@@ -13,7 +13,7 @@ export default async function Posts(props: {
   return (
     <>
       <Header dictionary={dictionary.header} />
-      <PostsList />
+      <PostsList dictionary={dictionary.posts} />
     </>
   );
 }

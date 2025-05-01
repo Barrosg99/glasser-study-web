@@ -28,16 +28,36 @@ const REMOVE_POST_MUTATION = gql`
 `;
 
 export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
+  const [subject, setSubject] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
   const [materials, setMaterials] = useState<
     { name: string; link: string; type: string }[]
   >([]);
 
-  
+  const handleMaterialChange = (
+    index: number,
+    field: keyof (typeof materials)[0],
+    value: string
+  ) => {
+    const updated = materials.map((material) => ({ ...material }));
+    updated[index][field] = value;
+    setMaterials(updated);
+  };
 
   useEffect(() => {
     if (post) {
+      setSubject(post.subject || "");
+      setTitle(post.title || "");
+      setDescription(post.description || "");
+      setTags(post.tags?.join(",") || "");
       setMaterials(post.materials ?? []);
     } else {
+      setSubject("");
+      setTitle("");
+      setDescription("");
+      setTags("");
       setMaterials([]);
     }
   }, [post]);
@@ -76,27 +96,24 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-
-    const formMaterials = materials.map((material, index) => ({
-      name: formData.get(`materialName${index}`) as string,
-      link: formData.get(`materialLink${index}`) as string,
-      type: formData.get(`materialType${index}`) as string,
-    }));
-
     const toastId = toast.loading("Publicando...");
 
     savePost({
       variables: {
         savePostId: post?.id,
         savePostInput: {
-          subject: formData.get("subject") as string,
-          title: formData.get("title") as string,
-          description: formData.get("description") as string,
-          tags: (formData.get("tags") as string)
-            .split(",")
-            .map((tag) => tag.trim()),
-          materials: formMaterials.length > 0 ? formMaterials : undefined,
+          subject,
+          title,
+          description,
+          tags: tags.split(",").map((t) => t.trim()),
+          materials:
+            materials.length > 0
+              ? materials.map(({ name, link, type }) => ({
+                  name,
+                  link,
+                  type,
+                }))
+              : undefined,
         },
       },
     }).finally(() => toast.dismiss(toastId));
@@ -156,9 +173,9 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               </label>
               <input
                 type="text"
-                name="subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
                 placeholder="Ex: Matemática, Biologia"
-                defaultValue={post?.subject || ""}
                 className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
               />
@@ -170,9 +187,9 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               </label>
               <input
                 type="text"
-                name="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ex: Como calcular o desvio padrão?"
-                defaultValue={post?.title || ""}
                 className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
               />
@@ -184,9 +201,9 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
               Descrição<span className="text-red-500"> *</span>
             </label>
             <textarea
-              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Explique sua dúvida de forma clara e objetiva."
-              defaultValue={post?.description || ""}
               className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-32 resize-none"
               required
             />
@@ -201,9 +218,11 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   </label>
                   <input
                     type="text"
-                    name={`materialName${index}`}
+                    value={material.name}
+                    onChange={(e) =>
+                      handleMaterialChange(index, "name", e.target.value)
+                    }
                     placeholder="Ex: Exercícios de Trigonometria"
-                    defaultValue={material.name}
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   />
@@ -215,9 +234,11 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                   </label>
                   <input
                     type="url"
-                    name={`materialLink${index}`}
+                    value={material.link}
+                    onChange={(e) =>
+                      handleMaterialChange(index, "link", e.target.value)
+                    }
                     placeholder="URL do material"
-                    defaultValue={material.link}
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   />
@@ -228,9 +249,11 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
                     Tipo*
                   </label>
                   <select
-                    name={`materialType${index}`}
+                    value={material.type}
+                    onChange={(e) =>
+                      handleMaterialChange(index, "type", e.target.value)
+                    }
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    defaultValue={material.type}
                     required
                   >
                     <option value="">Selecione o tipo de material</option>
@@ -270,9 +293,9 @@ export default function PostModal({ isOpen, onClose, post }: PostModalProps) {
             </label>
             <input
               type="text"
-              name="tags"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
               placeholder="Ex: Matemática, Estatística"
-              defaultValue={post?.tags?.join(",") || ""}
               className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />

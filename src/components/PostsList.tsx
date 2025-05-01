@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, MessageCircle, ThumbsUp } from "lucide-react";
+import { Pencil, MessageCircle, ThumbsUp, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import PostModal from "./PostModal";
 import { gql, useQuery } from "@apollo/client";
@@ -17,6 +17,7 @@ export interface Post {
         name: string;
         link: string;
         type: string;
+        _typename: string;
       }[]
     | null;
   author: {
@@ -94,7 +95,21 @@ export default function PostsList() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-gray-600 text-sm">{post.subject}</h2>
-                  <h3 className="text-xl font-semibold mt-1">{post.title}</h3>
+                  <div className="flex text-xl items-center gap-3">
+                    <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
+                    {post.materials?.map((material) => (
+                      <a
+                        href={material.link}
+                        key={material.link}
+                        className="font-semibold underline flex items-center gap-1 hover:text-gray-600"
+                      >
+                        {material.name}
+                        <span>
+                          <ExternalLink size={16} />
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
                 {post.isAuthor && (
                   <button

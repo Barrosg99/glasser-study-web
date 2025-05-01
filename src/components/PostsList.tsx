@@ -3,42 +3,80 @@
 import { Pencil, MessageCircle, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import PostModal from "./PostModal";
+import { gql, useQuery } from "@apollo/client";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface Post {
   id: string;
-  subject: string;
   title: string;
-  content: string;
-  date: string;
+  subject: string;
+  description: string;
   tags: string[];
+  materials:
+    | {
+        name: string;
+        link: string;
+        type: string;
+      }[]
+    | null;
+  author: {
+    id: string;
+  };
+  isAuthor: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// This is temporary mock data - should be replaced with real API calls
-const mockPosts: Post[] = [
-  {
-    id: "1",
-    subject: "Nome da Disciplina",
-    title: "Título da Dúvida",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-    date: "14 Feb 2024",
-    tags: ["Discussão", "Pergunta", "Dúvida"],
-  },
-  // Add more mock posts as needed
-];
+const GET_POSTS = gql`
+  query GetPosts {
+    posts {
+      id
+      title
+      subject
+      description
+      tags
+      materials {
+        name
+        link
+        type
+      }
+      author {
+        id
+      }
+      isAuthor
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 export default function PostsList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [token] = useLocalStorage<string>("token");
 
-  const handleSubmit = (data: {
-    subject: string;
-    title: string;
-    description: string;
-    tags: string[];
-  }) => {
-    // Here you would typically handle the new post creation
-    console.log(data);
-    setIsModalOpen(false);
-  };
+  // const handleSubmit = (data: {
+  //   subject: string;
+  //   title: string;
+  //   description: string;
+  //   tags: string[];
+  // }) => {
+  //   // Here you would typically handle the new post creation
+  //   console.log(data);
+  //   setIsModalOpen(false);
+  // };
+
+  const { data: postsData, loading: loadingPosts } = useQuery<{
+    posts: Post[];
+  }>(GET_POSTS, {
+    // pollInterval: 1000,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
+
+  console.log(postsData, loadingPosts);
 
   return (
     <main className="min-h-screen bg-gray-50 pt-20 text-black">
@@ -56,23 +94,25 @@ export default function PostsList() {
         <PostModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
         />
 
         <div className="space-y-6">
-          {mockPosts.map((post) => (
+          {postsData?.posts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-gray-600 text-sm">{post.subject}</h2>
                   <h3 className="text-xl font-semibold mt-1">{post.title}</h3>
                 </div>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <Pencil size={20} />
-                </button>
+                {post.isAuthor && (
+                  <button className="text-gray-400 hover:text-gray-600">
+                    <Pencil size={20} />
+                  </button>
+                )}
               </div>
 
-              <p className="text-gray-600 mb-4">{post.content}</p>
+              <p className="text-gray-600 mb-4">{post.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.tags.map((tag) => (
@@ -94,7 +134,9 @@ export default function PostsList() {
                   <MessageCircle size={18} />
                   <span>0</span>
                 </button>
-                <span className="text-sm">{post.date}</span>
+                <span className="text-sm">
+                  {new Date(post.updatedAt).toLocaleString()}
+                </span>
               </div>
             </div>
           ))}

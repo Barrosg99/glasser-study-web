@@ -1,32 +1,68 @@
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { gql, useMutation } from "@apollo/client";
 import { X } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    subject: string;
-    title: string;
-    description: string;
-    tags: string[];
-    materials?: {
-      name: string;
-      link: string;
-      type: string;
-    }[];
-  }) => void;
+  // onSubmit: (data: {
+  //   subject: string;
+  //   title: string;
+  //   description: string;
+  //   tags: string[];
+  //   materials?: {
+  //     name: string;
+  //     link: string;
+  //     type: string;
+  //   }[];
+  // }) => void;
 }
+
+const SAVE_POST_MUTATION = gql`
+  mutation SavePost($createPostInput: SavePostDto!) {
+    createPost(createPostInput: $createPostInput) {
+      id
+    }
+  }
+`;
 
 export default function PostModal({
   isOpen,
   onClose,
-  onSubmit,
-}: PostModalProps) {
+}: // onSubmit,
+PostModalProps) {
   const [materials, setMaterials] = useState<
     { name: string; link: string; type: string }[]
   >([]);
 
-  if (!isOpen) return null;
+  const [token] = useLocalStorage<string>("token");
+
+  const [savePost] = useMutation(SAVE_POST_MUTATION, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      toast.success("Publicação criada com sucesso");
+      // onClose();
+    },
+    onError: () => {
+      toast.error("Erro ao criar publicação");
+    },
+    // refetchQueries: [
+    //   {
+    //     query: GET_GROUPS,
+    //     context: {
+    //       headers: {
+    //         Authorization: token,
+    //       },
+    //     },
+    //   },
+    // ],
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,15 +74,21 @@ export default function PostModal({
       type: formData.get(`materialType${index}`) as string,
     }));
 
-    onSubmit({
-      subject: formData.get("subject") as string,
-      title: formData.get("title") as string,
-      description: formData.get("description") as string,
-      tags: (formData.get("tags") as string)
-        .split(",")
-        .map((tag) => tag.trim()),
-      materials: formMaterials.length > 0 ? formMaterials : undefined,
-    });
+    const toastId = toast.loading("Publicando...");
+
+    savePost({
+      variables: {
+        createPostInput: {
+          subject: formData.get("subject") as string,
+          title: formData.get("title") as string,
+          description: formData.get("description") as string,
+          tags: (formData.get("tags") as string)
+            .split(",")
+            .map((tag) => tag.trim()),
+          materials: formMaterials.length > 0 ? formMaterials : undefined,
+        },
+      },
+    }).finally(() => toast.dismiss(toastId));
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -64,6 +106,8 @@ export default function PostModal({
   const removeMaterial = (index: number) => {
     setMaterials(materials.filter((_, i) => i !== index));
   };
+
+  if (!isOpen) return null;
 
   return (
     <div

@@ -99,6 +99,8 @@ export default function PostsList() {
                     <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
                     {post.materials?.map((material) => (
                       <a
+                        target="_blank"
+                        rel="noopener noreferrer"
                         href={material.link}
                         key={material.link}
                         className="font-semibold underline flex items-center gap-1 hover:text-gray-600"

@@ -24,11 +24,27 @@
       },
       "email": { "placeholder": "Enter your email" },
       "password": { "label": "Password", "placeholder": "Enter your password" },
+      "resetPassword": { "link": "Forgot your password?" },
       "submit": { "loading": "Logging in...", "text": "Login" }
     },
     "footer": {
       "title": "Don't have an account?",
       "link": "Sign Up"
+    }
+  },
+  "resetPassword": {
+    "body": {
+      "title": "Don't worry, we'll help you recover access!",
+      "toast": {
+        "success": "A new password has been sent to your email",
+        "error": "Error resetting password"
+      },
+      "email": { "placeholder": "Enter your email" },
+      "submit": { "loading": "Resetting...", "text": "Reset Password" }
+    },
+    "footer": {
+      "title": "Remember your password?",
+      "link": "Login"
     }
   },
   "signUp": {

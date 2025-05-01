@@ -24,11 +24,27 @@
       },
       "email": { "placeholder": "Digite seu email" },
       "password": { "label": "Senha", "placeholder": "Digite sua senha" },
-      "submit": { "loading": "Entrando...", "text": "Entrar" }
+      "submit": { "loading": "Entrando...", "text": "Entrar" },
+      "resetPassword": { "link": "Esqueceu sua senha?" }
     },
     "footer": {
       "title": "Não tem uma conta?",
       "link": "Cadastre-se"
+    }
+  },
+  "resetPassword": {
+    "body": {
+      "title": "Não se preocupe, vamos te ajudar a recuperar o acesso!",
+      "toast": {
+        "success": "Uma nova senha foi enviada para o seu email",
+        "error": "Erro ao redefinir senha"
+      },
+      "email": { "placeholder": "Digite seu email" },
+      "submit": { "loading": "Redefinindo...", "text": "Redefinir Senha" }
+    },
+    "footer": {
+      "title": "Lembrou sua senha?",
+      "link": "Login"
     }
   },
   "signUp": {

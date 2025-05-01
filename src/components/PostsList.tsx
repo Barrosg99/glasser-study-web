@@ -6,7 +6,7 @@ import PostModal from "./PostModal";
 import { gql, useQuery } from "@apollo/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-interface Post {
+export interface Post {
   id: string;
   title: string;
   subject: string;
@@ -52,20 +52,10 @@ const GET_POSTS = gql`
 
 export default function PostsList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [token] = useLocalStorage<string>("token");
 
-  // const handleSubmit = (data: {
-  //   subject: string;
-  //   title: string;
-  //   description: string;
-  //   tags: string[];
-  // }) => {
-  //   // Here you would typically handle the new post creation
-  //   console.log(data);
-  //   setIsModalOpen(false);
-  // };
-
-  const { data: postsData, loading: loadingPosts } = useQuery<{
+  const { data: postsData } = useQuery<{
     posts: Post[];
   }>(GET_POSTS, {
     // pollInterval: 1000,
@@ -75,8 +65,6 @@ export default function PostsList() {
       },
     },
   });
-
-  console.log(postsData, loadingPosts);
 
   return (
     <main className="min-h-screen bg-gray-50 pt-20 text-black">
@@ -93,8 +81,11 @@ export default function PostsList() {
 
         <PostModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          // onSubmit={handleSubmit}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedPost(null);
+          }}
+          post={selectedPost}
         />
 
         <div className="space-y-6">
@@ -106,7 +97,13 @@ export default function PostsList() {
                   <h3 className="text-xl font-semibold mt-1">{post.title}</h3>
                 </div>
                 {post.isAuthor && (
-                  <button className="text-gray-400 hover:text-gray-600">
+                  <button
+                    className="text-gray-400 hover:text-gray-600"
+                    onClick={() => {
+                      setSelectedPost(post);
+                      setIsModalOpen(true);
+                    }}
+                  >
                     <Pencil size={20} />
                   </button>
                 )}

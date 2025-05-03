@@ -28,6 +28,7 @@ export function middleware(request: NextRequest) {
     [
       "/images/login.svg",
       "/images/sign-up.svg",
+      "/images/reset-password.svg",
       "/favicon.ico",
       "/file.svg",
       "/globe.svg",

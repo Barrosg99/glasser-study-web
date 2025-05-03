@@ -3,42 +3,30 @@
 import { getDictionary } from "@/dictionaries";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LocaleLink from "./LocaleLink";
 import Image from "next/image";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { toast } from "react-hot-toast";
 
-const LOGIN_MUTATION = gql`
-  mutation Login($userLoginData: LoggedUserDto!) {
-    login(userLoginData: $userLoginData) {
-      token
-    }
+const RESET_PASSWORD_MUTATION = gql`
+  mutation ResetPassword($email: String!) {
+    resetPassword(email: $email)
   }
 `;
 
-export default function LoginForm({
+export default function ResetPasswordForm({
   dictionary,
 }: {
-  dictionary: Awaited<ReturnType<typeof getDictionary>>["login"];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>["resetPassword"];
 }) {
   const { body, footer } = dictionary;
   const router = useRouter();
 
-  const [token, setToken] = useLocalStorage<string>("token");
-  useEffect(() => {
-      if (token) {
-        router.push("/");
-      }
-    });
-
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
-    onCompleted: (data) => {
-      setToken(data.login.token);
-      router.push("/");
+  const [resetPassword, { loading }] = useMutation(RESET_PASSWORD_MUTATION, {
+    onCompleted: () => {
+      router.push("/login");
       toast.success(body.toast.success);
     },
     onError: () => {
@@ -49,12 +37,9 @@ export default function LoginForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    login({
+    resetPassword({
       variables: {
-        userLoginData: {
-          email,
-          password,
-        },
+        email,
       },
     });
   };
@@ -82,29 +67,6 @@ export default function LoginForm({
             required
           />
 
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-black"
-          >
-            {body.password.label}
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-5 md:w-2/3"
-            placeholder={body.password.placeholder}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <LocaleLink
-            className="text-left mb-10 underline text-blue-500 block hover:text-blue-700"
-            href="/reset-password"
-          >
-            {body.resetPassword.link}
-          </LocaleLink>
-
           <button
             type="submit"
             disabled={loading}
@@ -117,7 +79,7 @@ export default function LoginForm({
           <h2 className="text-center mt-5 text-black ">{footer.title}</h2>
           <LocaleLink
             className="text-center text-black underline text-blue-500 block hover:text-blue-700"
-            href="/signup"
+            href="/login"
           >
             {footer.link}
           </LocaleLink>
@@ -125,7 +87,7 @@ export default function LoginForm({
       </div>
       <div className="relative w-1/2 items-center justify-center hidden md:flex">
         <Image
-          src="/images/login.svg"
+          src="/images/reset-password.svg"
           alt="Logo"
           fill
           style={{ objectFit: "contain" }}

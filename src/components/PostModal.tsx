@@ -160,7 +160,6 @@ export default function PostModal({
 
   if (!isOpen) return null;
 
-  console.log(materials);
 
   return (
     <div

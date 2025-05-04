@@ -9,28 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.6",
-    "@formatjs/intl-localematcher": "^0.6.1",
-    "graphql": "^16.10.0",
-    "lucide-react": "^0.503.0",
-    "negotiator": "^1.0.0",
+    "@apollo/client": "3.13.6",
+    "@formatjs/intl-localematcher": "0.6.1",
+    "graphql": "16.10.0",
+    "lucide-react": "0.503.0",
+    "negotiator": "1.0.0",
     "next": "15.2.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-hot-toast": "^2.5.2",
-    "server-only": "^0.0.1"
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-hot-toast": "2.5.2",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/negotiator": "^0.6.3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@eslint/eslintrc": "3",
+    "@tailwindcss/postcss": "4",
+    "@types/negotiator": "0.6.3",
+    "@types/node": "20",
+    "@types/react": "19",
+    "@types/react-dom": "19",
+    "eslint": "9",
     "eslint-config-next": "15.2.4",
-    "tailwind-scrollbar-hide": "^2.0.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "tailwind-scrollbar-hide": "2.0.0",
+    "tailwindcss": "4",
+    "typescript": "5"
   }
 }

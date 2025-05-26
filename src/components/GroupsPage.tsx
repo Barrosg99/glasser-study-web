@@ -1,8 +1,8 @@
 "use client";
-import { Users, Plus, X } from "lucide-react";
+import { Users, Plus, X, MoreVertical } from "lucide-react";
 import { getDictionary } from "@/dictionaries";
-import { useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
@@ -16,6 +16,22 @@ interface Group {
     email: string;
   }[];
   isModerator: boolean;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  isCurrentUser: boolean;
+  sender: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  group: {
+    id: string;
+    name: string;
+  };
+  createdAt: Date;
 }
 
 const GET_GROUPS = gql`
@@ -50,6 +66,38 @@ const DELETE_GROUP_MUTATION = gql`
   }
 `;
 
+const GET_MESSAGES = gql`
+  query GetMessages($groupId: ID!) {
+    groupMessages(groupId: $groupId) {
+      id
+      content
+      isCurrentUser
+      sender {
+        id
+        name
+        email
+      }
+      createdAt
+    }
+  }
+`;
+
+const SAVE_MESSAGE_MUTATION = gql`
+  mutation SaveMessage($saveMessageInput: SaveMessageDto!) {
+    saveMessage(saveMessageInput: $saveMessageInput) {
+      id
+      content
+      isCurrentUser
+      sender {
+        id
+        name
+        email
+      }
+      createdAt
+    }
+  }
+`;
+
 export default function GroupsPage({
   dictionary,
 }: {
@@ -62,6 +110,22 @@ export default function GroupsPage({
   const [members, setMembers] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [token] = useLocalStorage<string>("token");
+  const [newMessage, setNewMessage] = useState("");
+  const [conversation, setConversation] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setConversation(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscapeKey);
+    return () => window.removeEventListener("keydown", handleEscapeKey);
+  }, []);
 
   const { data: groupsData, loading: loadingGroups } = useQuery<{
     myGroups: Group[];
@@ -72,6 +136,40 @@ export default function GroupsPage({
       },
     },
   });
+
+  const [
+    getMessages,
+    {
+      data: { groupMessages = [] } = { groupMessages: [] },
+      loading: loadingMessages,
+    },
+  ] = useLazyQuery<{
+    groupMessages: Message[];
+  }>(GET_MESSAGES, {
+    onCompleted: () => {
+      requestAnimationFrame(() => {
+        const messagesContainer = document.querySelector(".chat-messages");
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      });
+    },
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (conversation) {
+      getMessages({
+        variables: {
+          groupId: conversation.id,
+        },
+      });
+    }
+  }, [conversation, getMessages]);
 
   const [saveGroup, { loading }] = useMutation(SAVE_GROUP_MUTATION, {
     context: {
@@ -105,6 +203,49 @@ export default function GroupsPage({
         },
       },
     ],
+  });
+
+  const [saveMessage] = useMutation(SAVE_MESSAGE_MUTATION, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      requestAnimationFrame(() => {
+        const messagesContainer = document.querySelector(".chat-messages");
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      });
+    },
+    update: (cache, { data: mutationData }) => {
+      if (!conversation) return;
+
+      const existingData = cache.readQuery<{
+        groupMessages: Message[];
+      }>({
+        query: GET_MESSAGES,
+        variables: {
+          groupId: conversation.id,
+        },
+      });
+
+      if (existingData) {
+        cache.writeQuery({
+          query: GET_MESSAGES,
+          variables: {
+            groupId: conversation.id,
+          },
+          data: {
+            groupMessages: [
+              ...existingData.groupMessages,
+              mutationData.saveMessage,
+            ],
+          },
+        });
+      }
+    },
   });
 
   const [deleteGroup] = useMutation(DELETE_GROUP_MUTATION, {
@@ -175,6 +316,7 @@ export default function GroupsPage({
     setDescription("");
     setMembers("");
     setSelectedGroup(null);
+    setNewMessage("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -207,8 +349,26 @@ export default function GroupsPage({
     setShowModal(true);
   };
 
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !conversation) return;
+
+    const message = {
+      content: newMessage,
+      groupId: conversation.id,
+    };
+
+    saveMessage({
+      variables: {
+        saveMessageInput: message,
+      },
+    });
+
+    setNewMessage("");
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 pt-[74px]">
       {showModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -331,8 +491,18 @@ export default function GroupsPage({
             groupsData?.myGroups?.map((group) => (
               <li
                 key={group.id}
-                className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 cursor-pointer transition-colors duration-200"
-                onClick={() => handleOpenModal(group)}
+                className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+                onClick={() => {
+                  setConversation({ id: group.id, name: group.name });
+                  // requestAnimationFrame(() => {
+                  //   const messagesContainer =
+                  //     document.querySelector(".chat-messages");
+                  //   if (messagesContainer) {
+                  //     messagesContainer.scrollTop =
+                  //       messagesContainer.scrollHeight;
+                  //   }
+                  // });
+                }}
               >
                 <Users size={32} className="text-gray-500 mt-1" />
                 <div className="flex-1">
@@ -341,12 +511,96 @@ export default function GroupsPage({
                     {group.description}
                   </div>
                 </div>
+                <button
+                  onClick={() => handleOpenModal(group)}
+                  className="p-1 hover:bg-gray-300 rounded-full transition-colors"
+                >
+                  <MoreVertical size={20} className="text-gray-500" />
+                </button>
               </li>
             ))
           )}
         </ul>
       </aside>
-      <main className="flex-1 bg-gray-300 m-4 rounded"></main>
+      <main className="flex-1 bg-white m-4 rounded-lg shadow-lg flex flex-col">
+        <div className="p-4 border-b">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {conversation ? conversation.name : dictionary.messages.selectGroup}
+          </h2>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 chat-messages">
+          {!conversation ? (
+            <div className="h-full flex items-center justify-center">
+              <div className="text-gray-500 text-center">
+                {dictionary.messages.selectGroupToView}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {loadingMessages ? (
+                <div className="flex items-center justify-center p-4 text-gray-500">
+                  {dictionary.list.loading}
+                </div>
+              ) : (
+                groupMessages.map((message) => {
+                  const { isCurrentUser } = message;
+
+                  return (
+                    <div
+                      key={message.id}
+                      className={`flex flex-col space-y-1 max-w-[50%] ${
+                        isCurrentUser ? "ml-auto" : "mr-auto"
+                      }`}
+                    >
+                      <div
+                        className={`flex items-center space-x-2 ${
+                          isCurrentUser ? "justify-end" : ""
+                        }`}
+                      >
+                        <span className="font-medium text-gray-900">
+                          {message.sender.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(message.createdAt).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <div
+                        className={`rounded-lg p-3 ${
+                          isCurrentUser
+                            ? "bg-[#990000] text-white"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {message.content}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+        {conversation && (
+          <div className="p-4 border-t">
+            <form onSubmit={handleSendMessage} className="flex gap-2">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={dictionary.messages.typeMessage}
+                className="flex-1 bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+              />
+              <button
+                type="submit"
+                disabled={!newMessage.trim()}
+                className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {dictionary.messages.send}
+              </button>
+            </form>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

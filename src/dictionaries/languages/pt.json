@@ -138,6 +138,13 @@
       "deleteConfirm": "Tem certeza que deseja remover este grupo?",
       "deleteConfirmYes": "Sim",
       "deleteConfirmNo": "Não"
+    },
+    "messages": {
+      "selectGroup": "Selecione um grupo para ver as mensagens",
+      "selectGroupToView": "Selecione um grupo para ver as mensagens",
+      "noMessages": "Nenhuma mensagem ainda",
+      "typeMessage": "Digite sua mensagem...",
+      "send": "Enviar"
     }
   },
   "posts": {

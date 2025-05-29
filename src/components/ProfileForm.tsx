@@ -137,7 +137,7 @@ export default function ProfileForm({
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 pt-[74px]">
       <div className="w-full bg-[#FFFFFF] p-15 pt-10 pb-2">
         <h1 className="text-black text-center text-4xl mb-6 md:text-left">
           {body.title}

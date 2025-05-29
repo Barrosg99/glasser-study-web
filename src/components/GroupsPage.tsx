@@ -146,14 +146,7 @@ export default function GroupsPage({
   ] = useLazyQuery<{
     groupMessages: Message[];
   }>(GET_MESSAGES, {
-    onCompleted: () => {
-      requestAnimationFrame(() => {
-        const messagesContainer = document.querySelector(".chat-messages");
-        if (messagesContainer) {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-      });
-    },
+    pollInterval: 1000,
     context: {
       headers: {
         Authorization: token,
@@ -170,6 +163,15 @@ export default function GroupsPage({
       });
     }
   }, [conversation, getMessages]);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const messagesContainer = document.querySelector(".chat-messages");
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    });
+  }, [groupMessages]);
 
   const [saveGroup, { loading }] = useMutation(SAVE_GROUP_MUTATION, {
     context: {
@@ -210,14 +212,6 @@ export default function GroupsPage({
       headers: {
         Authorization: token,
       },
-    },
-    onCompleted: () => {
-      requestAnimationFrame(() => {
-        const messagesContainer = document.querySelector(".chat-messages");
-        if (messagesContainer) {
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-      });
     },
     update: (cache, { data: mutationData }) => {
       if (!conversation) return;
@@ -494,14 +488,6 @@ export default function GroupsPage({
                 className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
                 onClick={() => {
                   setConversation({ id: group.id, name: group.name });
-                  // requestAnimationFrame(() => {
-                  //   const messagesContainer =
-                  //     document.querySelector(".chat-messages");
-                  //   if (messagesContainer) {
-                  //     messagesContainer.scrollTop =
-                  //       messagesContainer.scrollHeight;
-                  //   }
-                  // });
                 }}
               >
                 <Users size={32} className="text-gray-500 mt-1" />

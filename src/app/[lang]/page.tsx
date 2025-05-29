@@ -14,7 +14,7 @@ export default async function Home(props: {
   } = dictionary;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 pt-[74px]">
       <Header dictionary={dictionary["header"]} />
       <main className="max-w-7xl mx-auto px-4 py-16">
         <div className="max-w-2xl">

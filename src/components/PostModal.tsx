@@ -160,7 +160,6 @@ export default function PostModal({
 
   if (!isOpen) return null;
 
-
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -181,17 +180,38 @@ export default function PostModal({
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-black mb-2">
-                {dictionary.subject}
+                {dictionary.subject.label}
                 <span className="text-red-500"> *</span>
               </label>
-              <input
-                type="text"
+              <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="Ex: Matemática, Biologia"
                 className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
-              />
+              >
+                <option value="">{dictionary.subject.select}</option>
+                <option value="MATHEMATICS">
+                  {dictionary.subject.options.MATHEMATICS}
+                </option>
+                <option value="PORTUGUESE">
+                  {dictionary.subject.options.PORTUGUESE}
+                </option>
+                <option value="PHYSICS">
+                  {dictionary.subject.options.PHYSICS}
+                </option>
+                <option value="CHEMISTRY">
+                  {dictionary.subject.options.CHEMISTRY}
+                </option>
+                <option value="BIOLOGY">
+                  {dictionary.subject.options.BIOLOGY}
+                </option>
+                <option value="HISTORY">
+                  {dictionary.subject.options.HISTORY}
+                </option>
+                <option value="GEOGRAPHY">
+                  {dictionary.subject.options.GEOGRAPHY}
+                </option>
+              </select>
             </div>
 
             <div className="flex-1">
@@ -274,25 +294,25 @@ export default function PostModal({
                     <option value="">
                       {dictionary.materials.types.select}
                     </option>
-                    <option value="ARTICLE">
+                    <option value="MATHEMATICS">
                       {dictionary.materials.types.article}
                     </option>
-                    <option value="EXERCISE">
+                    <option value="PORTUGUESE">
                       {dictionary.materials.types.exercise}
                     </option>
-                    <option value="PODCAST">
+                    <option value="PHYSICS">
                       {dictionary.materials.types.podcast}
                     </option>
-                    <option value="SUMMARY">
+                    <option value="CHEMISTRY">
                       {dictionary.materials.types.summary}
                     </option>
-                    <option value="SIMULATOR">
+                    <option value="BIOLOGY">
                       {dictionary.materials.types.simulator}
                     </option>
-                    <option value="VIDEO">
+                    <option value="HISTORY">
                       {dictionary.materials.types.video}
                     </option>
-                    <option value="OTHER">
+                    <option value="GEOGRAPHY">
                       {dictionary.materials.types.other}
                     </option>
                   </select>

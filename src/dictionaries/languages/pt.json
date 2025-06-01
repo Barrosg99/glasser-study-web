@@ -150,13 +150,36 @@
   "posts": {
     "list": {
       "title": "Fórum",
-      "newPost": "Nova Publicação"
+      "newPost": "Nova Publicação",
+      "search": {
+        "placeholder": "Pesquisar posts...",
+        "filter": {
+          "all": "Tudo",
+          "title": "Título",
+          "description": "Descrição",
+          "tags": "Tags"
+        },
+        "subjects": "Matérias",
+        "allSubjects": "Todas as matérias"
+      }
     },
     "modal": {
-      "subject": "Disciplina",
       "title": "Título",
       "description": "Descrição",
       "tags": "Tags",
+      "subject": {
+        "label": "Disciplina",
+        "select": "Selecione a disciplina",
+        "options": {
+          "MATHEMATICS": "Matemática",
+          "PORTUGUESE": "Português",
+          "PHYSICS": "Física",
+          "CHEMISTRY": "Química",
+          "BIOLOGY": "Biologia",
+          "HISTORY": "História",
+          "GEOGRAPHY": "Geografia"
+        }
+      },
       "materials": {
         "title": "Materiais",
         "name": "Nome do Material",
@@ -165,14 +188,14 @@
         "add": "Adicionar material",
         "remove": "Remover material",
         "types": {
-          "select": "Selecione o tipo de material",
-          "article": "Artigo",
-          "exercise": "Exercícios",
-          "podcast": "Podcast",
-          "summary": "Resumo",
-          "simulator": "Simulado",
-          "video": "Vídeo",
-          "other": "Outro"
+          "select": "Selecione a disciplina",
+          "article": "Matemática",
+          "exercise": "Português",
+          "podcast": "Física",
+          "summary": "Química",
+          "simulator": "Biologia",
+          "video": "História",
+          "other": "Geografia"
         }
       },
       "submit": {

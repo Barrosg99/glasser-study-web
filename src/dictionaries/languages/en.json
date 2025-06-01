@@ -153,13 +153,36 @@
   "posts": {
     "list": {
       "title": "Forum",
-      "newPost": "New Post"
+      "newPost": "New Post",
+      "search": {
+        "placeholder": "Search posts...",
+        "filter": {
+          "all": "All",
+          "title": "Title",
+          "description": "Description",
+          "tags": "Tags"
+        },
+        "subjects": "Subjects",
+        "allSubjects": "All subjects"
+      }
     },
     "modal": {
-      "subject": "Subject",
       "title": "Title",
       "description": "Description",
       "tags": "Tags",
+      "subject": {
+        "label": "Subject",
+        "select": "Select subject",
+        "options": {
+          "MATHEMATICS": "Mathematics",
+          "PORTUGUESE": "Portuguese",
+          "PHYSICS": "Physics",
+          "CHEMISTRY": "Chemistry",
+          "BIOLOGY": "Biology",
+          "HISTORY": "History",
+          "GEOGRAPHY": "Geography"
+        }
+      },
       "materials": {
         "title": "Materials",
         "name": "Material Name",
@@ -168,14 +191,14 @@
         "add": "Add material",
         "remove": "Remove material",
         "types": {
-          "select": "Select material type",
-          "article": "Article",
-          "exercise": "Exercise",
-          "podcast": "Podcast",
-          "summary": "Summary",
-          "simulator": "Simulator",
-          "video": "Video",
-          "other": "Other"
+          "select": "Select subject",
+          "article": "Mathematics",
+          "exercise": "Portuguese",
+          "podcast": "Physics",
+          "summary": "Chemistry",
+          "simulator": "Biology",
+          "video": "History",
+          "other": "Geography"
         }
       },
       "submit": {

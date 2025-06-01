@@ -141,6 +141,13 @@
       "deleteConfirm": "Are you sure you want to remove this group?",
       "deleteConfirmYes": "Yes",
       "deleteConfirmNo": "No"
+    },
+    "messages": {
+      "selectGroup": "Select a group to view messages",
+      "selectGroupToView": "Select a group to view messages",
+      "noMessages": "No messages yet",
+      "typeMessage": "Type your message...",
+      "send": "Send"
     }
   },
   "posts": {

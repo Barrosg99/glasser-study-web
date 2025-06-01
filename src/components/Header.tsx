@@ -46,7 +46,7 @@ export default function Header({
 
   return (
     <header className="w-full bg-[#990000] shadow-sm fixed min-h-[74px] top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center h-[74px]">
         <LocaleLink
           href="/"
           className="text-xl text-white"

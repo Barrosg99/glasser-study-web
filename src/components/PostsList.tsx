@@ -73,7 +73,7 @@ export default function PostsList({
   });
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-20 text-black">
+    <main className="min-h-screen bg-gray-50 pt-20 text-black pt-[74px]">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-black text-2xl font-bold">

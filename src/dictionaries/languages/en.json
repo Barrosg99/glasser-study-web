@@ -191,14 +191,14 @@
         "add": "Add material",
         "remove": "Remove material",
         "types": {
-          "select": "Select subject",
-          "article": "Mathematics",
-          "exercise": "Portuguese",
-          "podcast": "Physics",
-          "summary": "Chemistry",
-          "simulator": "Biology",
-          "video": "History",
-          "other": "Geography"
+          "select": "Select type",
+          "ARTICLE": "Article",
+          "EXERCISE": "Exercise",
+          "PODCAST": "Podcast",
+          "SUMMARY": "Summary",
+          "SIMULATOR": "Simulator",
+          "VIDEO": "Video",
+          "OTHER": "Other"
         }
       },
       "submit": {

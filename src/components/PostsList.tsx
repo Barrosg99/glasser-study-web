@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import PostModal from "./PostModal";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getDictionary } from "@/dictionaries";
 
@@ -57,8 +57,17 @@ const GET_POSTS = gql`
         id
       }
       isAuthor
+      likesCount
       createdAt
       updatedAt
+    }
+  }
+`;
+
+const TOGGLE_LIKE = gql`
+  mutation ToggleLike($input: CreateLikeDto!) {
+    toggleLike(input: $input) {
+      id
     }
   }
 `;
@@ -110,6 +119,14 @@ export default function PostsList({
       searchFilter: searchFilter === "tudo" ? undefined : searchFilter,
       subject: selectedSubject || undefined,
     },
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
+
+  const [toggleLike] = useMutation(TOGGLE_LIKE, {
     context: {
       headers: {
         Authorization: token,
@@ -181,7 +198,13 @@ export default function PostsList({
               onClick={() => setIsSubjectDropdownOpen(!isSubjectDropdownOpen)}
               className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 flex items-center gap-2"
             >
-              <span>{selectedSubject || dictionary.list.search.subjects}</span>
+              <span>
+                {selectedSubject
+                  ? dictionary.modal.subject.options[
+                      selectedSubject as keyof typeof dictionary.modal.subject.options
+                    ]
+                  : dictionary.list.search.subjects}
+              </span>
               <ChevronDown size={16} />
             </button>
             {isSubjectDropdownOpen && (
@@ -192,8 +215,8 @@ export default function PostsList({
                       setSelectedSubject(null);
                       setIsSubjectDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      !selectedSubject ? "bg-gray-50" : ""
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-200 ${
+                      !selectedSubject ? "bg-gray-200" : ""
                     }`}
                   >
                     {dictionary.list.search.allSubjects}
@@ -203,11 +226,11 @@ export default function PostsList({
                       <button
                         key={key}
                         onClick={() => {
-                          setSelectedSubject(value.toUpperCase());
+                          setSelectedSubject(key);
                           setIsSubjectDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                          selectedSubject === value ? "bg-gray-50" : ""
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-200 ${
+                          selectedSubject === key ? "bg-gray-200" : ""
                         }`}
                       >
                         {value}
@@ -297,7 +320,7 @@ export default function PostsList({
                   </span>
                 ))}
               </div>
-
+              {/* aki */}
               <div className="flex items-center gap-4 text-gray-500">
                 <button className="flex items-center gap-1 hover:text-gray-700">
                   <ThumbsUp size={18} />

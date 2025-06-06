@@ -188,14 +188,14 @@
         "add": "Adicionar material",
         "remove": "Remover material",
         "types": {
-          "select": "Selecione a disciplina",
-          "article": "Matemática",
-          "exercise": "Português",
-          "podcast": "Física",
-          "summary": "Química",
-          "simulator": "Biologia",
-          "video": "História",
-          "other": "Geografia"
+          "select": "Selecione o tipo",
+          "ARTICLE": "Artigo",
+          "EXERCISE": "Exercício",
+          "PODCAST": "Podcast",
+          "SUMMARY": "Resumo",
+          "SIMULATOR": "Simulador",
+          "VIDEO": "Vídeo",
+          "OTHER": "Outro"
         }
       },
       "submit": {

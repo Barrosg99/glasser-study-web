@@ -151,6 +151,9 @@
     "list": {
       "title": "Fórum",
       "newPost": "Nova Publicação",
+      "like": {
+        "error": "Erro ao curtir post"
+      },
       "search": {
         "placeholder": "Pesquisar posts...",
         "filter": {

@@ -154,6 +154,9 @@
     "list": {
       "title": "Forum",
       "newPost": "New Post",
+      "like": {
+        "error": "Error liking post"
+      },
       "search": {
         "placeholder": "Search posts...",
         "filter": {

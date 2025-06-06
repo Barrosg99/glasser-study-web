@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import PostModal from "./PostModal";
+import PostCommentsModal from "./PostCommentsModal";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getDictionary } from "@/dictionaries";
@@ -36,6 +37,7 @@ export interface Post {
   likesCount: number;
   createdAt: Date;
   updatedAt: Date;
+  commentsCount: number;
 }
 
 const GET_POSTS = gql`
@@ -60,6 +62,7 @@ const GET_POSTS = gql`
       }
       isAuthor
       likesCount
+      commentsCount
       createdAt
       updatedAt
     }
@@ -80,6 +83,7 @@ export default function PostsList({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["posts"];
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -115,7 +119,7 @@ export default function PostsList({
   const { data: postsData } = useQuery<{
     posts: Post[];
   }>(GET_POSTS, {
-    pollInterval: 1000,
+    // pollInterval: 1000,
     variables: {
       searchTerm: searchTerm || undefined,
       searchFilter: searchFilter === "tudo" ? undefined : searchFilter,
@@ -290,6 +294,18 @@ export default function PostsList({
           dictionary={dictionary.modal}
         />
 
+        {selectedPost && (
+          <PostCommentsModal
+            isOpen={isCommentsModalOpen}
+            onClose={() => {
+              setIsCommentsModalOpen(false);
+              setSelectedPost(null);
+            }}
+            postId={selectedPost.id}
+            dictionary={dictionary.list.comments}
+          />
+        )}
+
         <div className="space-y-6">
           {postsData?.posts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
@@ -358,9 +374,15 @@ export default function PostsList({
                     {post.likesCount}
                   </span>
                 </button>
-                <button className="flex items-center gap-1 hover:text-gray-700">
+                <button
+                  onClick={() => {
+                    setSelectedPost(post);
+                    setIsCommentsModalOpen(true);
+                  }}
+                  className="flex items-center gap-1 hover:text-gray-700"
+                >
                   <MessageCircle size={18} />
-                  <span>0</span>
+                  <span>{post.commentsCount}</span>
                 </button>
                 <span className="text-sm">
                   {new Date(post.updatedAt).toLocaleString()}

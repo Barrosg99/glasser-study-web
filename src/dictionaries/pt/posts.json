@@ -1,0 +1,49 @@
+{
+  "list": {
+    "title": "Posts",
+    "newPost": "Novo Post",
+    "like": {
+      "error": "Erro ao curtir post"
+    },
+    "search": {
+      "placeholder": "Buscar posts...",
+      "filter": {
+        "all": "Todos",
+        "title": "Título",
+        "description": "Descrição",
+        "tags": "Tags"
+      },
+      "subjects": "Assuntos",
+      "allSubjects": "Todos os Assuntos"
+    }
+  },
+  "modal": {
+    "title": "Novo Post",
+    "fields": {
+      "title": "Título",
+      "description": "Descrição",
+      "tags": "Tags",
+      "subjects": "Assuntos"
+    },
+    "buttons": {
+      "cancel": "Cancelar",
+      "save": "Salvar"
+    },
+    "errors": {
+      "title": "Título é obrigatório",
+      "description": "Descrição é obrigatória",
+      "tags": "Pelo menos uma tag é obrigatória",
+      "subjects": "Pelo menos um assunto é obrigatório"
+    }
+  },
+  "comments": {
+    "title": "Comentários",
+    "placeholder": "Escreva um comentário...",
+    "post": "Comentar",
+    "noComments": "Nenhum comentário ainda",
+    "errors": {
+      "post": "Erro ao postar comentário",
+      "fetch": "Erro ao carregar comentários"
+    }
+  }
+}

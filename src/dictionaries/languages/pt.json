@@ -154,6 +154,17 @@
       "like": {
         "error": "Erro ao curtir post"
       },
+      "comments": {
+        "title": "Comentários",
+        "placeholder": "Adicione um comentário...",
+        "send": "Enviar",
+        "noComments": "Nenhum comentário ainda",
+        "post": "Publicação",
+        "errors": {
+          "post": "Erro ao buscar comentários",
+          "fetch": "Erro ao buscar comentários"
+        }
+      },
       "search": {
         "placeholder": "Pesquisar posts...",
         "filter": {

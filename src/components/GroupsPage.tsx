@@ -35,8 +35,8 @@ interface Message {
 }
 
 const GET_GROUPS = gql`
-  query GetGroups {
-    myGroups {
+  query GetGroups($search: String) {
+    myGroups(search: $search) {
       id
       name
       description
@@ -54,6 +54,14 @@ const SAVE_GROUP_MUTATION = gql`
   mutation SaveGroup($saveGroupData: CreateGroupDto!, $id: String) {
     saveGroup(saveGroupData: $saveGroupData, id: $id) {
       id
+      name
+      description
+      members {
+        id
+        name
+        email
+      }
+      isModerator
     }
   }
 `;
@@ -108,6 +116,7 @@ export default function GroupsPage({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState("");
+  const [search, setSearch] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [token] = useLocalStorage<string>("token");
   const [newMessage, setNewMessage] = useState("");
@@ -134,6 +143,9 @@ export default function GroupsPage({
       headers: {
         Authorization: token,
       },
+    },
+    variables: {
+      search,
     },
   });
 
@@ -195,16 +207,24 @@ export default function GroupsPage({
           : dictionary.toast.createError
       );
     },
-    refetchQueries: [
-      {
+    update: (cache, { data: mutationData }) => {
+      const existingData = cache.readQuery<{
+        myGroups: Group[];
+      }>({
         query: GET_GROUPS,
-        context: {
-          headers: {
-            Authorization: token,
+        variables: { search },
+      });
+
+      if (existingData) {
+        cache.writeQuery({
+          query: GET_GROUPS,
+          variables: { search },
+          data: {
+            myGroups: [...existingData.myGroups, mutationData.saveGroup],
           },
-        },
-      },
-    ],
+        });
+      }
+    },
   });
 
   const [saveMessage] = useMutation(SAVE_MESSAGE_MUTATION, {
@@ -255,16 +275,14 @@ export default function GroupsPage({
     onError: () => {
       toast.error(dictionary.toast.deleteError);
     },
-    refetchQueries: [
-      {
-        query: GET_GROUPS,
-        context: {
-          headers: {
-            Authorization: token,
-          },
-        },
-      },
-    ],
+    update: (cache, { data: mutationData }) => {
+      cache.evict({
+        id: cache.identify({
+          __typename: "Group",
+          id: mutationData.removeGroup.id,
+        }),
+      });
+    },
   });
 
   const handleDeleteGroup = async (groupId: string) => {
@@ -463,6 +481,7 @@ export default function GroupsPage({
             type="text"
             placeholder={dictionary.search.placeholder}
             className="w-full bg-white px-4 py-2 rounded-full border border-gray-100 text-black focus:outline-none placeholder:text-gray-400"
+            onChange={(e) => setSearch(e.target.value)}
           />
           <button
             className="bg-[#990000] text-white px-4 py-2 rounded-full hover:bg-[#B22222] transition"
@@ -476,6 +495,10 @@ export default function GroupsPage({
           {loadingGroups ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
               {dictionary.list.loading}
+            </li>
+          ) : groupsData?.myGroups?.length === 0 && search ? (
+            <li className="flex items-center justify-center p-4 text-gray-500">
+              {dictionary.list.emptySearch}
             </li>
           ) : groupsData?.myGroups?.length === 0 ? (
             <li className="flex items-center justify-center p-4 text-gray-500">

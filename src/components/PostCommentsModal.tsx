@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Send } from "lucide-react";
+import { Send, Trash2, X } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import toast from "react-hot-toast";
 
 const GET_COMMENTS = gql`
   query GetComments($postId: String!) {
@@ -12,6 +13,7 @@ const GET_COMMENTS = gql`
         id
         name
       }
+      isAuthor
       createdAt
     }
   }
@@ -31,6 +33,12 @@ const CREATE_COMMENT = gql`
   }
 `;
 
+const DELETE_COMMENT = gql`
+  mutation DeleteComment($commentId: String!) {
+    deleteComment(commentId: $commentId)
+  }
+`;
+
 interface Comment {
   id: string;
   content: string;
@@ -38,6 +46,7 @@ interface Comment {
     id: string;
     name: string;
   };
+  isAuthor: boolean;
   createdAt: Date;
 }
 
@@ -49,10 +58,12 @@ interface PostCommentsModalProps {
     title: string;
     placeholder: string;
     post: string;
+    delete: string;
     noComments: string;
     errors: {
       post: string;
       fetch: string;
+      delete: string;
     };
   };
 }
@@ -71,6 +82,7 @@ export default function PostCommentsModal({
     error,
     refetch,
   } = useQuery(GET_COMMENTS, {
+    pollInterval: 1000,
     context: {
       headers: {
         Authorization: token,
@@ -92,11 +104,25 @@ export default function PostCommentsModal({
         setComment("");
         refetch();
       },
-      onError: (error) => {
-        console.error(dictionary.errors.post, error);
+      onError: () => {
+        toast.error(dictionary.errors.post);
       },
     }
   );
+
+  const [deleteComment] = useMutation(DELETE_COMMENT, {
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onCompleted: () => {
+      refetch();
+    },
+    onError: () => {
+      toast.error(dictionary.errors.delete);
+    },
+  });
 
   if (!isOpen) return null;
 
@@ -104,22 +130,26 @@ export default function PostCommentsModal({
     e.preventDefault();
     if (!comment.trim()) return;
 
-    try {
-      await createComment({
-        variables: {
-          input: {
-            postId,
-            content: comment.trim(),
-          },
+    await createComment({
+      variables: {
+        input: {
+          postId,
+          content: comment.trim(),
         },
-      });
-    } catch (error) {
-      console.error(dictionary.errors.post, error);
-    }
+      },
+    });
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment({
+      variables: {
+        commentId,
+      },
+    });
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{dictionary.title}</h2>
@@ -127,7 +157,7 @@ export default function PostCommentsModal({
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
-            ×
+            <X size={24} />
           </button>
         </div>
 
@@ -145,12 +175,23 @@ export default function PostCommentsModal({
           ) : (
             <div className="space-y-4">
               {commentsData?.getComments.map((comment: Comment) => (
-                <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
+                <div key={comment.id} className="bg-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-medium">{comment.author.name}</span>
-                    <span className="text-sm text-gray-500">
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </span>
+                      {comment.isAuthor && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-gray-500 hover:text-red-500 transition-colors"
+                          title={dictionary.delete}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-gray-700">{comment.content}</p>
                 </div>

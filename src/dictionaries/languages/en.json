@@ -159,13 +159,15 @@
       },
       "comments": {
         "title": "Comments",
+        "delete": "Delete comment",
         "placeholder": "Add a comment...",
         "send": "Send",
         "noComments": "No comments yet",
         "post": "Post",
         "errors": {
           "post": "Error fetching comments",
-          "fetch": "Error fetching comments"
+          "fetch": "Error fetching comments",
+          "delete": "Error deleting comment"
         }
       },
       "search": {

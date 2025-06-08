@@ -138,7 +138,7 @@ export default function PostsList({
   const { data: postsData } = useQuery<{
     posts: Post[];
   }>(GET_POSTS, {
-    // pollInterval: 1000,
+    pollInterval: 1000,
     variables: {
       searchTerm: searchTerm || undefined,
       searchFilter: searchFilter === "tudo" ? undefined : searchFilter,

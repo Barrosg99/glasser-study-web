@@ -294,27 +294,14 @@ export default function PostModal({
                     <option value="">
                       {dictionary.materials.types.select}
                     </option>
-                    <option value="MATHEMATICS">
-                      {dictionary.materials.types.article}
-                    </option>
-                    <option value="PORTUGUESE">
-                      {dictionary.materials.types.exercise}
-                    </option>
-                    <option value="PHYSICS">
-                      {dictionary.materials.types.podcast}
-                    </option>
-                    <option value="CHEMISTRY">
-                      {dictionary.materials.types.summary}
-                    </option>
-                    <option value="BIOLOGY">
-                      {dictionary.materials.types.simulator}
-                    </option>
-                    <option value="HISTORY">
-                      {dictionary.materials.types.video}
-                    </option>
-                    <option value="GEOGRAPHY">
-                      {dictionary.materials.types.other}
-                    </option>
+                    {Object.entries(dictionary.materials.types).map(
+                      ([key, value]) =>
+                        key !== "select" && (
+                          <option value={key} key={key}>
+                            {value}
+                          </option>
+                        )
+                    )}
                   </select>
                 </div>
               </div>

@@ -20,7 +20,7 @@
       "title": "Access your account",
       "toast": {
         "success": "Logged in successfully",
-        "error": "Error logging in"
+        "error": "Email or password invalid."
       },
       "email": { "placeholder": "Enter your email" },
       "password": { "label": "Password", "placeholder": "Enter your password" },
@@ -54,7 +54,8 @@
         "success": "Account created successfully",
         "error": "Error creating account",
         "diffPassword": "Passwords do not match",
-        "passwordError": "Password must be between 8 and 12 characters, including letters and numbers"
+        "passwordError": "Password must be between 8 and 12 characters, including letters and numbers",
+        "emailError": "Email already on use."
       },
       "name": { "label": "Name", "placeholder": "Enter your name" },
       "goal": {
@@ -129,7 +130,8 @@
     },
     "list": {
       "loading": "Loading groups...",
-      "empty": "You don't have any groups yet, try creating one..."
+      "empty": "You don't have any groups yet, try creating one...",
+      "emptySearch": "No groups found with this search"
     },
     "toast": {
       "createSuccess": "Group created successfully!",
@@ -157,6 +159,7 @@
       "like": {
         "error": "Error liking post"
       },
+      "noPosts": "No posts yet, try creating one...",
       "comments": {
         "title": "Comments",
         "delete": "Delete comment",
@@ -179,7 +182,9 @@
           "tags": "Tags"
         },
         "subjects": "Subjects",
-        "allSubjects": "All subjects"
+        "allSubjects": "All subjects",
+        "materialTypes": "Material Types",
+        "allMaterialTypes": "All material types"
       }
     },
     "modal": {
@@ -199,22 +204,33 @@
           "GEOGRAPHY": "Geography"
         }
       },
+      "materialType": {
+        "options": {
+          "READ": "Reading",
+          "LISTEN": "Listening",
+          "WATCH": "Watching",
+          "WATCH_AND_LISTEN": "Watching and listening",
+          "DISCUSS": "Discussing",
+          "PRACTICE": "Practicing",
+          "TEACHING": "Teaching"
+        }
+      },
       "materials": {
         "title": "Materials",
         "name": "Material Name",
         "link": "Link",
-        "type": "Type",
+        "type": "Is for",
         "add": "Add material",
         "remove": "Remove material",
         "types": {
           "select": "Select type",
-          "ARTICLE": "Article",
-          "EXERCISE": "Exercise",
-          "PODCAST": "Podcast",
-          "SUMMARY": "Summary",
-          "SIMULATOR": "Simulator",
-          "VIDEO": "Video",
-          "OTHER": "Other"
+          "READ": "Reading",
+          "LISTEN": "Listening",
+          "WATCH": "Watching",
+          "WATCH_AND_LISTEN": "Watching and listening",
+          "DISCUSS": "Discussing",
+          "PRACTICE": "Practicing",
+          "TEACHING": "Teaching"
         }
       },
       "submit": {

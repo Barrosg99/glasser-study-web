@@ -20,7 +20,7 @@
       "title": "Acesse sua conta",
       "toast": {
         "success": "Logado com sucesso",
-        "error": "Erro ao logar"
+        "error": "Email ou senha inválidos"
       },
       "email": { "placeholder": "Digite seu email" },
       "password": { "label": "Senha", "placeholder": "Digite sua senha" },
@@ -54,7 +54,8 @@
         "success": "Conta criada com sucesso",
         "error": "Erro ao criar conta",
         "diffPassword": "As senhas não coincidem",
-        "passwordError": "A senha deve conter entre 8 e 12 caracteres, incluindo letras e números"
+        "passwordError": "A senha deve conter entre 8 e 12 caracteres, incluindo letras e números",
+        "emailError": "Email já em uso"
       },
       "name": { "label": "Nome", "placeholder": "Digite seu nome" },
       "goal": {
@@ -100,7 +101,7 @@
   },
   "groups": {
     "search": {
-      "placeholder": "Com quem quer falar?"
+      "placeholder": "Pesquise por um grupo..."
     },
     "create": {
       "title": "Criar Grupo",
@@ -126,7 +127,8 @@
     },
     "list": {
       "loading": "Carregando grupos...",
-      "empty": "Você não tem grupos ainda, tente criar um..."
+      "empty": "Você não tem grupos ainda, tente criar um...",
+      "emptySearch": "Nenhum grupo encontrado com esta busca"
     },
     "toast": {
       "createSuccess": "Grupo criado com sucesso!",
@@ -154,6 +156,7 @@
       "like": {
         "error": "Erro ao curtir post"
       },
+      "noPosts": "Nenhuma publicação ainda, tente criar uma...",
       "comments": {
         "title": "Comentários",
         "delete": "Excluir comentário",
@@ -176,7 +179,9 @@
           "tags": "Tags"
         },
         "subjects": "Matérias",
-        "allSubjects": "Todas as matérias"
+        "allSubjects": "Todas as matérias",
+        "materialTypes": "Tipos de Material",
+        "allMaterialTypes": "Todos os tipos"
       }
     },
     "modal": {
@@ -196,22 +201,33 @@
           "GEOGRAPHY": "Geografia"
         }
       },
+      "materialType": {
+        "options": {
+          "READ": "Ler",
+          "LISTEN": "Ouvir",
+          "WATCH": "Ver",
+          "WATCH_AND_LISTEN": "Ver e ouvir",
+          "DISCUSS": "Discutir",
+          "PRACTICE": "Praticar",
+          "TEACHING": "Ensinar"
+        }
+      },
       "materials": {
         "title": "Materiais",
         "name": "Nome do Material",
         "link": "Link",
-        "type": "Tipo",
+        "type": "É para",
         "add": "Adicionar material",
         "remove": "Remover material",
         "types": {
-          "select": "Selecione o tipo",
-          "ARTICLE": "Artigo",
-          "EXERCISE": "Exercício",
-          "PODCAST": "Podcast",
-          "SUMMARY": "Resumo",
-          "SIMULATOR": "Simulador",
-          "VIDEO": "Vídeo",
-          "OTHER": "Outro"
+          "select": "Selecione uma opção",
+          "READ": "Ler",
+          "LISTEN": "Ouvir",
+          "WATCH": "Ver",
+          "WATCH_AND_LISTEN": "Ver e ouvir",
+          "DISCUSS": "Discutir",
+          "PRACTICE": "Praticar",
+          "TEACHING": "Ensinar"
         }
       },
       "submit": {

@@ -43,8 +43,12 @@ export default function SignUp({
     onCompleted: () => {
       router.push("/login");
     },
-    onError: () => {
-      toast.error(body.toast.error);
+    onError: (e) => {
+      if (e?.message.includes("Email already on use.")) {
+        toast.error(body.toast.emailError);
+      } else {
+        toast.error(body.toast.error);
+      }
     },
   });
 
@@ -88,6 +92,8 @@ export default function SignUp({
               const value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
               setName(value);
             }}
+            minLength={6}
+            maxLength={20}
             required
           />
 

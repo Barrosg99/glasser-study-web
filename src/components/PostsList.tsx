@@ -41,11 +41,17 @@ export interface Post {
 }
 
 const GET_POSTS = gql`
-  query GetPosts($searchTerm: String, $searchFilter: String, $subject: String) {
+  query GetPosts(
+    $searchTerm: String
+    $searchFilter: String
+    $subject: String
+    $materialType: String
+  ) {
     posts(
       searchTerm: $searchTerm
       searchFilter: $searchFilter
       subject: $subject
+      materialType: $materialType
     ) {
       id
       title
@@ -90,9 +96,13 @@ export default function PostsList({
   const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState("all");
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedMaterialType, setSelectedMaterialType] = useState<
+    string | null
+  >(null);
   const [token] = useLocalStorage<string>("token");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const subjectDropdownRef = useRef<HTMLDivElement>(null);
+  const materialTypeDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -108,6 +118,12 @@ export default function PostsList({
       ) {
         setIsSubjectDropdownOpen(false);
       }
+      if (
+        materialTypeDropdownRef.current &&
+        !materialTypeDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsMaterialTypeDropdownOpen(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -116,14 +132,18 @@ export default function PostsList({
     };
   }, []);
 
+  const [isMaterialTypeDropdownOpen, setIsMaterialTypeDropdownOpen] =
+    useState(false);
+
   const { data: postsData } = useQuery<{
     posts: Post[];
   }>(GET_POSTS, {
-    // pollInterval: 1000,
+    pollInterval: 1000,
     variables: {
       searchTerm: searchTerm || undefined,
       searchFilter: searchFilter === "tudo" ? undefined : searchFilter,
       subject: selectedSubject || undefined,
+      materialType: selectedMaterialType || undefined,
     },
     context: {
       headers: {
@@ -145,6 +165,7 @@ export default function PostsList({
           searchTerm: searchTerm || undefined,
           searchFilter: searchFilter === "tudo" ? undefined : searchFilter,
           subject: selectedSubject || undefined,
+          materialType: selectedMaterialType || undefined,
         },
       },
     ],
@@ -270,6 +291,56 @@ export default function PostsList({
               </div>
             )}
           </div>
+          <div className="relative" ref={materialTypeDropdownRef}>
+            <button
+              onClick={() =>
+                setIsMaterialTypeDropdownOpen(!isMaterialTypeDropdownOpen)
+              }
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 flex items-center gap-2"
+            >
+              <span>
+                {selectedMaterialType
+                  ? dictionary.modal.materialType.options[
+                      selectedMaterialType as keyof typeof dictionary.modal.materialType.options
+                    ]
+                  : dictionary.list.search.materialTypes}
+              </span>
+              <ChevronDown size={16} />
+            </button>
+            {isMaterialTypeDropdownOpen && (
+              <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setSelectedMaterialType(null);
+                      setIsMaterialTypeDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-200 ${
+                      !selectedMaterialType ? "bg-gray-200" : ""
+                    }`}
+                  >
+                    {dictionary.list.search.allMaterialTypes}
+                  </button>
+                  {Object.entries(dictionary.modal.materialType.options).map(
+                    ([key, value]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          setSelectedMaterialType(key);
+                          setIsMaterialTypeDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-200 ${
+                          selectedMaterialType === key ? "bg-gray-200" : ""
+                        }`}
+                      >
+                        {value}
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-between items-center mb-6">
@@ -307,89 +378,97 @@ export default function PostsList({
         )}
 
         <div className="space-y-6">
-          {postsData?.posts.map((post) => (
-            <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-gray-600 text-sm">
-                    {
-                      dictionary.modal.subject.options[
-                        post.subject as keyof typeof dictionary.modal.subject.options
-                      ]
-                    }
-                  </h2>
-                  <div className="flex text-xl items-center gap-3">
-                    <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
-                    {post.materials?.map((material) => (
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={material.link}
-                        key={material.link}
-                        className="font-semibold underline flex items-center gap-1 hover:text-gray-600"
-                      >
-                        {material.name}
-                        <span>
-                          <ExternalLink size={16} />
-                        </span>
-                      </a>
-                    ))}
+          {postsData?.posts.length === 0 ? (
+            <div className="text-center text-gray-500">
+              {dictionary.list.noPosts}
+            </div>
+          ) : (
+            postsData?.posts.map((post) => (
+              <div key={post.id} className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h2 className="text-gray-600 text-sm">
+                      {
+                        dictionary.modal.subject.options[
+                          post.subject as keyof typeof dictionary.modal.subject.options
+                        ]
+                      }
+                    </h2>
+                    <div className="flex text-xl items-center gap-3">
+                      <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
+                      {post.materials?.map((material) => (
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={material.link}
+                          key={material.link}
+                          className="font-semibold underline flex items-center gap-1 hover:text-gray-600"
+                        >
+                          {material.name}
+                          <span>
+                            <ExternalLink size={16} />
+                          </span>
+                        </a>
+                      ))}
+                    </div>
                   </div>
+                  {post.isAuthor && (
+                    <button
+                      className="text-gray-400 hover:text-gray-600"
+                      onClick={() => {
+                        setSelectedPost(post);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      <Pencil size={20} />
+                    </button>
+                  )}
                 </div>
-                {post.isAuthor && (
+
+                <p className="text-gray-600 mb-4">{post.description}</p>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {post.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 text-gray-500">
                   <button
-                    className="text-gray-400 hover:text-gray-600"
+                    onClick={() => handleLikeClick(post.id)}
+                    className="flex items-center gap-1 hover:text-[#990000]"
+                  >
+                    <ThumbsUp
+                      size={18}
+                      className={post.likesCount > 0 ? "text-[#990000]" : ""}
+                    />
+                    <span
+                      className={post.likesCount > 0 ? "text-[#990000]" : ""}
+                    >
+                      {post.likesCount}
+                    </span>
+                  </button>
+                  <button
                     onClick={() => {
                       setSelectedPost(post);
-                      setIsModalOpen(true);
+                      setIsCommentsModalOpen(true);
                     }}
+                    className="flex items-center gap-1 hover:text-gray-700"
                   >
-                    <Pencil size={20} />
+                    <MessageCircle size={18} />
+                    <span>{post.commentsCount}</span>
                   </button>
-                )}
-              </div>
-
-              <p className="text-gray-600 mb-4">{post.description}</p>
-
-              <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full"
-                  >
-                    {tag}
+                  <span className="text-sm">
+                    {new Date(post.updatedAt).toLocaleString()}
                   </span>
-                ))}
+                </div>
               </div>
-              <div className="flex items-center gap-4 text-gray-500">
-                <button
-                  onClick={() => handleLikeClick(post.id)}
-                  className="flex items-center gap-1 hover:text-[#990000]"
-                >
-                  <ThumbsUp
-                    size={18}
-                    className={post.likesCount > 0 ? "text-[#990000]" : ""}
-                  />
-                  <span className={post.likesCount > 0 ? "text-[#990000]" : ""}>
-                    {post.likesCount}
-                  </span>
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedPost(post);
-                    setIsCommentsModalOpen(true);
-                  }}
-                  className="flex items-center gap-1 hover:text-gray-700"
-                >
-                  <MessageCircle size={18} />
-                  <span>{post.commentsCount}</span>
-                </button>
-                <span className="text-sm">
-                  {new Date(post.updatedAt).toLocaleString()}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </main>

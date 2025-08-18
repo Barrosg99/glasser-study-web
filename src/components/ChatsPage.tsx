@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
-interface Group {
+interface Chat {
   id: string;
   name: string;
   description: string;
@@ -27,16 +29,22 @@ interface Message {
     name: string;
     email: string;
   };
-  group: {
+  chat: {
     id: string;
     name: string;
   };
   createdAt: Date;
 }
 
-const GET_GROUPS = gql`
-  query GetGroups($search: String) {
-    myGroups(search: $search) {
+interface Member {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const GET_CHATS = gql`
+  query GetChats($search: String) {
+    myChats(search: $search) {
       id
       name
       description
@@ -50,9 +58,9 @@ const GET_GROUPS = gql`
   }
 `;
 
-const SAVE_GROUP_MUTATION = gql`
-  mutation SaveGroup($saveGroupData: CreateGroupDto!, $id: String) {
-    saveGroup(saveGroupData: $saveGroupData, id: $id) {
+const SAVE_CHAT_MUTATION = gql`
+  mutation SaveChat($saveChatData: CreateChatDto!, $id: String) {
+    saveChat(saveChatData: $saveChatData, id: $id) {
       id
       name
       description
@@ -66,17 +74,17 @@ const SAVE_GROUP_MUTATION = gql`
   }
 `;
 
-const DELETE_GROUP_MUTATION = gql`
-  mutation RemoveGroup($id: String!) {
-    removeGroup(id: $id) {
+const DELETE_CHAT_MUTATION = gql`
+  mutation RemoveChat($id: String!) {
+    removeChat(id: $id) {
       id
     }
   }
 `;
 
 const GET_MESSAGES = gql`
-  query GetMessages($groupId: ID!) {
-    groupMessages(groupId: $groupId) {
+  query GetMessages($chatId: ID!) {
+    chatMessages(chatId: $chatId) {
       id
       content
       isCurrentUser
@@ -106,16 +114,17 @@ const SAVE_MESSAGE_MUTATION = gql`
   }
 `;
 
-export default function GroupsPage({
+export default function ChatsPage({
   dictionary,
 }: {
-  dictionary: Awaited<ReturnType<typeof getDictionary>>["groups"];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>["chat"];
 }) {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [members, setMembers] = useState("");
+  const [member, setMember] = useState("");
   const [search, setSearch] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [token] = useLocalStorage<string>("token");
@@ -124,6 +133,15 @@ export default function GroupsPage({
     id: string;
     name: string;
   } | null>(null);
+
+  const [memberList, setMemberList] = useState<Member[]>([]);
+  const { user } = useCurrentUser();
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -136,9 +154,9 @@ export default function GroupsPage({
     return () => window.removeEventListener("keydown", handleEscapeKey);
   }, []);
 
-  const { data: groupsData, loading: loadingGroups } = useQuery<{
-    myGroups: Group[];
-  }>(GET_GROUPS, {
+  const { data: chatsData, loading: loadingChats } = useQuery<{
+    myChats: Chat[];
+  }>(GET_CHATS, {
     context: {
       headers: {
         Authorization: token,
@@ -152,11 +170,11 @@ export default function GroupsPage({
   const [
     getMessages,
     {
-      data: { groupMessages = [] } = { groupMessages: [] },
+      data: { chatMessages = [] } = { chatMessages: [] },
       loading: loadingMessages,
     },
   ] = useLazyQuery<{
-    groupMessages: Message[];
+    chatMessages: Message[];
   }>(GET_MESSAGES, {
     pollInterval: 1000,
     context: {
@@ -170,7 +188,7 @@ export default function GroupsPage({
     if (conversation) {
       getMessages({
         variables: {
-          groupId: conversation.id,
+          chatId: conversation.id,
         },
       });
     }
@@ -183,9 +201,9 @@ export default function GroupsPage({
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }
     });
-  }, [groupMessages]);
+  }, [conversation, chatMessages]);
 
-  const [saveGroup, { loading }] = useMutation(SAVE_GROUP_MUTATION, {
+  const [saveChat, { loading }] = useMutation(SAVE_CHAT_MUTATION, {
     context: {
       headers: {
         Authorization: token,
@@ -193,7 +211,7 @@ export default function GroupsPage({
     },
     onCompleted: () => {
       toast.success(
-        selectedGroup
+        selectedChat
           ? dictionary.toast.updateSuccess
           : dictionary.toast.createSuccess
       );
@@ -202,25 +220,25 @@ export default function GroupsPage({
     },
     onError: () => {
       toast.error(
-        selectedGroup
+        selectedChat
           ? dictionary.toast.updateError
           : dictionary.toast.createError
       );
     },
     update: (cache, { data: mutationData }) => {
       const existingData = cache.readQuery<{
-        myGroups: Group[];
+        myChats: Chat[];
       }>({
-        query: GET_GROUPS,
+        query: GET_CHATS,
         variables: { search },
       });
 
       if (existingData) {
         cache.writeQuery({
-          query: GET_GROUPS,
+          query: GET_CHATS,
           variables: { search },
           data: {
-            myGroups: [...existingData.myGroups, mutationData.saveGroup],
+            myChats: [...existingData.myChats, mutationData.saveChat],
           },
         });
       }
@@ -237,11 +255,11 @@ export default function GroupsPage({
       if (!conversation) return;
 
       const existingData = cache.readQuery<{
-        groupMessages: Message[];
+        chatMessages: Message[];
       }>({
         query: GET_MESSAGES,
         variables: {
-          groupId: conversation.id,
+          chatId: conversation.id,
         },
       });
 
@@ -249,11 +267,11 @@ export default function GroupsPage({
         cache.writeQuery({
           query: GET_MESSAGES,
           variables: {
-            groupId: conversation.id,
+            chatId: conversation.id,
           },
           data: {
-            groupMessages: [
-              ...existingData.groupMessages,
+            chatMessages: [
+              ...existingData.chatMessages,
               mutationData.saveMessage,
             ],
           },
@@ -262,7 +280,7 @@ export default function GroupsPage({
     },
   });
 
-  const [deleteGroup] = useMutation(DELETE_GROUP_MUTATION, {
+  const [deleteChat] = useMutation(DELETE_CHAT_MUTATION, {
     context: {
       headers: {
         Authorization: token,
@@ -278,14 +296,14 @@ export default function GroupsPage({
     update: (cache, { data: mutationData }) => {
       cache.evict({
         id: cache.identify({
-          __typename: "Group",
-          id: mutationData.removeGroup.id,
+          __typename: "Chat",
+          id: mutationData.removeChat.id,
         }),
       });
     },
   });
 
-  const handleDeleteGroup = async (groupId: string) => {
+  const handleDeleteChat = async (chatId: string) => {
     if (isDeleting) return;
 
     setIsDeleting(true);
@@ -296,9 +314,9 @@ export default function GroupsPage({
           <span>{dictionary.toast.deleteConfirm}</span>
           <button
             onClick={() => {
-              deleteGroup({
+              deleteChat({
                 variables: {
-                  id: groupId,
+                  id: chatId,
                 },
               });
               toast.dismiss(t.id);
@@ -326,35 +344,35 @@ export default function GroupsPage({
   const resetForm = () => {
     setName("");
     setDescription("");
-    setMembers("");
-    setSelectedGroup(null);
+    setMember("");
+    setSelectedChat(null);
     setNewMessage("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    saveGroup({
+    saveChat({
       variables: {
-        saveGroupData: {
+        saveChatData: {
           name,
           description,
-          memberEmails: members
-            .split(",")
-            .map((email) => email.trim())
-            .filter(Boolean),
+          // memberEmails: members
+          //   .split(",")
+          //   .map((email) => email.trim())
+          //   .filter(Boolean),
         },
-        id: selectedGroup?.id,
+        id: selectedChat?.id,
       },
     });
   };
 
-  const handleOpenModal = (group?: Group) => {
-    if (group) {
-      setSelectedGroup(group);
-      setName(group.name);
-      setDescription(group.description);
-      setMembers(group.members.map((member) => member.email).join(","));
+  const handleOpenModal = (chat?: Chat) => {
+    if (chat) {
+      setSelectedChat(chat);
+      setName(chat.name);
+      setDescription(chat.description);
+      // setMembers(chat.members.map((member) => member.email).join(","));
     } else {
       resetForm();
     }
@@ -367,7 +385,7 @@ export default function GroupsPage({
 
     const message = {
       content: newMessage,
-      groupId: conversation.id,
+      chatId: conversation.id,
     };
 
     saveMessage({
@@ -377,6 +395,14 @@ export default function GroupsPage({
     });
 
     setNewMessage("");
+  };
+
+  const handleAddMember = () => {
+    // TODO: add member to the chat
+    setMemberList([
+      ...memberList,
+      { id: user?.id, name: user?.name, email: user?.email },
+    ]);
   };
 
   return (
@@ -416,7 +442,7 @@ export default function GroupsPage({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  disabled={selectedGroup?.isModerator === false}
+                  disabled={selectedChat?.isModerator === false}
                 />
               </div>
               <div>
@@ -431,27 +457,50 @@ export default function GroupsPage({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
-                  disabled={selectedGroup?.isModerator === false}
+                  disabled={selectedChat?.isModerator === false}
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-black mb-1">
-                  {dictionary.create.members.label}
-                </label>
-                <input
-                  type="text"
-                  className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder={dictionary.create.members.placeholder}
-                  value={members}
-                  onChange={(e) => setMembers(e.target.value)}
-                  disabled={selectedGroup?.isModerator === false}
-                />
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-black mb-1">
+                    {dictionary.create.members.label}
+                  </label>
+                  <input
+                    type="text"
+                    className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder={dictionary.create.members.placeholder}
+                    value={member}
+                    onChange={(e) => setMember(e.target.value)}
+                    disabled={selectedChat?.isModerator === false}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+                  onClick={handleAddMember}
+                >
+                  Add
+                </button>
               </div>
+              <div
+                key={user?.id}
+                className="text-black bg-gray-200 p-2 rounded-lg"
+              >
+                {user?.name} - {user?.email} - Moderator
+              </div>
+              {memberList.map((member) => (
+                <div
+                  key={member.id}
+                  className="text-black bg-gray-200 p-2 rounded-lg"
+                >
+                  {member.name} - {member.email}
+                </div>
+              ))}
               <div className="flex justify-end gap-4">
-                {selectedGroup?.isModerator && (
+                {selectedChat?.isModerator && (
                   <button
                     type="button"
-                    onClick={() => handleDeleteGroup(selectedGroup.id)}
+                    onClick={() => handleDeleteChat(selectedChat.id)}
                     className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
                   >
                     {dictionary.create.delete}
@@ -459,14 +508,14 @@ export default function GroupsPage({
                 )}
                 <button
                   type="submit"
-                  disabled={loading || selectedGroup?.isModerator === false}
+                  disabled={loading || selectedChat?.isModerator === false}
                   className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-[#B22222] transition disabled:bg-gray-400"
                 >
                   {loading
-                    ? selectedGroup
+                    ? selectedChat
                       ? dictionary.create.submit.updating
                       : dictionary.create.submit.creating
-                    : selectedGroup
+                    : selectedChat
                     ? dictionary.create.submit.update
                     : dictionary.create.submit.create}
                 </button>
@@ -492,36 +541,36 @@ export default function GroupsPage({
           </button>
         </div>
         <ul className="">
-          {loadingGroups ? (
+          {loadingChats ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
               {dictionary.list.loading}
             </li>
-          ) : groupsData?.myGroups?.length === 0 && search ? (
+          ) : chatsData?.myChats?.length === 0 && search ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
               {dictionary.list.emptySearch}
             </li>
-          ) : groupsData?.myGroups?.length === 0 ? (
+          ) : chatsData?.myChats?.length === 0 ? (
             <li className="flex items-center justify-center p-4 text-gray-500">
               {dictionary.list.empty}
             </li>
           ) : (
-            groupsData?.myGroups?.map((group) => (
+            chatsData?.myChats?.map((chat) => (
               <li
-                key={group.id}
+                key={chat.id}
                 className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
                 onClick={() => {
-                  setConversation({ id: group.id, name: group.name });
+                  setConversation({ id: chat.id, name: chat.name });
                 }}
               >
                 <Users size={32} className="text-gray-500 mt-1" />
                 <div className="flex-1">
-                  <div className="font-medium text-gray-400">{group.name}</div>
+                  <div className="font-medium text-gray-400">{chat.name}</div>
                   <div className="text-sm text-gray-700">
-                    {group.description}
+                    {chat.description}
                   </div>
                 </div>
                 <button
-                  onClick={() => handleOpenModal(group)}
+                  onClick={() => handleOpenModal(chat)}
                   className="p-1 hover:bg-gray-300 rounded-full transition-colors"
                 >
                   <MoreVertical size={20} className="text-gray-500" />
@@ -534,14 +583,14 @@ export default function GroupsPage({
       <main className="flex-1 bg-white m-4 rounded-lg shadow-lg flex flex-col">
         <div className="p-4 border-b">
           <h2 className="text-xl font-semibold text-gray-800">
-            {conversation ? conversation.name : dictionary.messages.selectGroup}
+            {conversation ? conversation.name : dictionary.messages.selectChat}
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto p-4 chat-messages">
           {!conversation ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-gray-500 text-center">
-                {dictionary.messages.selectGroupToView}
+                {dictionary.messages.selectChatToView}
               </div>
             </div>
           ) : (
@@ -551,7 +600,7 @@ export default function GroupsPage({
                   {dictionary.list.loading}
                 </div>
               ) : (
-                groupMessages.map((message) => {
+                chatMessages.map((message) => {
                   const { isCurrentUser } = message;
 
                   return (

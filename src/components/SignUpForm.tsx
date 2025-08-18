@@ -70,8 +70,8 @@ export default function SignUp({
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <div className="w-full bg-[#FFFFFF] p-15 pt-10 pb-2  md:w-1/2">
+    <div className="flex min-h-screen bg-gray-100 pt-[74px]">
+      <div className="w-full bg-[#FFFFFF] p-15 pt-5 pb-2  md:w-1/2">
         <h1 className="text-black text-center text-4xl mb-6 md:text-left">
           {body.title}
         </h1>

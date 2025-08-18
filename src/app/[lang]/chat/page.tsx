@@ -1,6 +1,6 @@
 import { getDictionary } from "@/dictionaries";
 import type { Locale } from "../../../../i18n-config";
-import GroupsPage from "@/components/GroupsPage";
+import ChatsPage from "@/components/ChatsPage";
 import Header from "@/components/Header";
 
 export default async function Page(props: {
@@ -12,7 +12,7 @@ export default async function Page(props: {
   return (
     <>
       <Header dictionary={dictionary["header"]} showButtons={false} />
-      <GroupsPage dictionary={dictionary["groups"]} />
+      <ChatsPage dictionary={dictionary["chat"]} />
     </>
   );
 }

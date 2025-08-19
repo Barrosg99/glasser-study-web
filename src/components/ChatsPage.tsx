@@ -114,6 +114,16 @@ const SAVE_MESSAGE_MUTATION = gql`
   }
 `;
 
+const GET_MEMBER = gql`
+  query GetMember($email: String!) {
+    user(email: $email) {
+      id
+      name
+      email
+    }
+  }
+`;
+
 export default function ChatsPage({
   dictionary,
 }: {
@@ -129,10 +139,7 @@ export default function ChatsPage({
   const [isDeleting, setIsDeleting] = useState(false);
   const [token] = useLocalStorage<string>("token");
   const [newMessage, setNewMessage] = useState("");
-  const [conversation, setConversation] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [conversation, setConversation] = useState<Chat | null>(null);
 
   const [memberList, setMemberList] = useState<Member[]>([]);
   const { user } = useCurrentUser();
@@ -177,6 +184,17 @@ export default function ChatsPage({
     chatMessages: Message[];
   }>(GET_MESSAGES, {
     pollInterval: 1000,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
+
+  const [getMember] = useLazyQuery<{
+    user: Member;
+  }>(GET_MEMBER, {
+    variables: { email: member },
     context: {
       headers: {
         Authorization: token,
@@ -234,11 +252,16 @@ export default function ChatsPage({
       });
 
       if (existingData) {
+        const filteredChats = [
+          ...existingData.myChats.filter(chat => chat.id !== mutationData.saveChat.id),
+          mutationData.saveChat
+        ];
+
         cache.writeQuery({
           query: GET_CHATS,
           variables: { search },
           data: {
-            myChats: [...existingData.myChats, mutationData.saveChat],
+            myChats: filteredChats,
           },
         });
       }
@@ -347,6 +370,7 @@ export default function ChatsPage({
     setMember("");
     setSelectedChat(null);
     setNewMessage("");
+    setMemberList([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -357,10 +381,7 @@ export default function ChatsPage({
         saveChatData: {
           name,
           description,
-          // memberEmails: members
-          //   .split(",")
-          //   .map((email) => email.trim())
-          //   .filter(Boolean),
+          membersIds: memberList.map((member) => member.id),
         },
         id: selectedChat?.id,
       },
@@ -372,7 +393,7 @@ export default function ChatsPage({
       setSelectedChat(chat);
       setName(chat.name);
       setDescription(chat.description);
-      // setMembers(chat.members.map((member) => member.email).join(","));
+      setMemberList(chat.members);
     } else {
       resetForm();
     }
@@ -397,12 +418,26 @@ export default function ChatsPage({
     setNewMessage("");
   };
 
-  const handleAddMember = () => {
-    // TODO: add member to the chat
-    setMemberList([
-      ...memberList,
-      { id: user?.id, name: user?.name, email: user?.email },
-    ]);
+  const handleAddMember = async () => {
+    const { data: memberData } = await getMember({
+      variables: {
+        email: member,
+      },
+    });
+
+    if (memberData?.user) {
+      if (memberList.some((m) => m.id === memberData.user.id)) {
+        toast.error("Member already added");
+        return;
+      } else {
+        setMemberList([...memberList, memberData.user]);
+        setMember("");
+      }
+    }
+  };
+
+  const handleRemoveMember = (id: string) => {
+    setMemberList(memberList.filter((m) => m.id !== id));
   };
 
   return (
@@ -488,14 +523,22 @@ export default function ChatsPage({
               >
                 {user?.name} - {user?.email} - Moderator
               </div>
-              {memberList.map((member) => (
-                <div
-                  key={member.id}
-                  className="text-black bg-gray-200 p-2 rounded-lg"
-                >
-                  {member.name} - {member.email}
-                </div>
-              ))}
+              {memberList
+                .filter((member) => member.id !== user?.id)
+                .map((member) => (
+                  <div
+                    key={member.id}
+                    className="text-black bg-gray-200 p-2 rounded-lg flex justify-between"
+                  >
+                    {member.name} - {member.email}
+                    <span
+                      className="text-red-500 cursor-pointer"
+                      onClick={() => handleRemoveMember(member.id)}
+                    >
+                      <X size={20} />
+                    </span>
+                  </div>
+                ))}
               <div className="flex justify-end gap-4">
                 {selectedChat?.isModerator && (
                   <button
@@ -559,7 +602,7 @@ export default function ChatsPage({
                 key={chat.id}
                 className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
                 onClick={() => {
-                  setConversation({ id: chat.id, name: chat.name });
+                  setConversation(chat);
                 }}
               >
                 <Users size={32} className="text-gray-500 mt-1" />

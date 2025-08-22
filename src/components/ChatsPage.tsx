@@ -6,17 +6,13 @@ import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useRouter } from "next/navigation";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+// import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 interface Chat {
   id: string;
   name: string;
   description: string;
-  members: {
-    id: string;
-    name: string;
-    email: string;
-  }[];
+  members: Member[];
   isModerator: boolean;
 }
 
@@ -37,9 +33,13 @@ interface Message {
 }
 
 interface Member {
-  id: string;
-  name: string;
-  email: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  isInvited: boolean;
+  isModerator: boolean;
 }
 
 const GET_CHATS = gql`
@@ -48,12 +48,16 @@ const GET_CHATS = gql`
       id
       name
       description
-      members {
-        id
-        name
-        email
-      }
       isModerator
+      members {
+        user {
+          id
+          name
+          email
+        }
+        isInvited
+        isModerator
+      }
     }
   }
 `;
@@ -64,12 +68,16 @@ const SAVE_CHAT_MUTATION = gql`
       id
       name
       description
-      members {
-        id
-        name
-        email
-      }
       isModerator
+      members {
+        user {
+          id
+          name
+          email
+        }
+        isInvited
+        isModerator
+      }
     }
   }
 `;
@@ -142,7 +150,7 @@ export default function ChatsPage({
   const [conversation, setConversation] = useState<Chat | null>(null);
 
   const [memberList, setMemberList] = useState<Member[]>([]);
-  const { user } = useCurrentUser();
+  // const { user } = useCurrentUser();
 
   useEffect(() => {
     if (!token) {
@@ -192,13 +200,16 @@ export default function ChatsPage({
   });
 
   const [getMember] = useLazyQuery<{
-    user: Member;
+    user: Member["user"];
   }>(GET_MEMBER, {
     variables: { email: member },
     context: {
       headers: {
         Authorization: token,
       },
+    },
+    onError: () => {
+      toast.error("Member not found");
     },
   });
 
@@ -253,8 +264,10 @@ export default function ChatsPage({
 
       if (existingData) {
         const filteredChats = [
-          ...existingData.myChats.filter(chat => chat.id !== mutationData.saveChat.id),
-          mutationData.saveChat
+          ...existingData.myChats.filter(
+            (chat) => chat.id !== mutationData.saveChat.id
+          ),
+          mutationData.saveChat,
         ];
 
         cache.writeQuery({
@@ -381,7 +394,7 @@ export default function ChatsPage({
         saveChatData: {
           name,
           description,
-          membersIds: memberList.map((member) => member.id),
+          membersIds: memberList.map((member) => member.user.id),
         },
         id: selectedChat?.id,
       },
@@ -426,18 +439,22 @@ export default function ChatsPage({
     });
 
     if (memberData?.user) {
-      if (memberList.some((m) => m.id === memberData.user.id)) {
+      if (memberList.some((m) => m.user.id === memberData.user.id)) {
         toast.error("Member already added");
         return;
       } else {
-        setMemberList([...memberList, memberData.user]);
+        setMemberList([...memberList, {
+          user: memberData.user,
+          isInvited: true,
+          isModerator: false,
+        }]);
         setMember("");
       }
     }
   };
 
   const handleRemoveMember = (id: string) => {
-    setMemberList(memberList.filter((m) => m.id !== id));
+    setMemberList(memberList.filter((m) => m.user.id !== id));
   };
 
   return (
@@ -517,23 +534,23 @@ export default function ChatsPage({
                   Add
                 </button>
               </div>
-              <div
+              {/* <div
                 key={user?.id}
                 className="text-black bg-gray-200 p-2 rounded-lg"
               >
                 {user?.name} - {user?.email} - Moderator
-              </div>
+              </div> */}
               {memberList
-                .filter((member) => member.id !== user?.id)
+                // .filter((member) => member.user.id !== user?.id)
                 .map((member) => (
                   <div
-                    key={member.id}
+                    key={member.user.id}
                     className="text-black bg-gray-200 p-2 rounded-lg flex justify-between"
                   >
-                    {member.name} - {member.email}
+                    {member.user.name} - {member.user.email} - {member.isModerator ? "Moderator" : member.isInvited ? "Invited" : "Member"}
                     <span
                       className="text-red-500 cursor-pointer"
-                      onClick={() => handleRemoveMember(member.id)}
+                      onClick={() => handleRemoveMember(member.user.id)}
                     >
                       <X size={20} />
                     </span>
@@ -598,6 +615,7 @@ export default function ChatsPage({
             </li>
           ) : (
             chatsData?.myChats?.map((chat) => (
+              // criar logica de aceitar/recusar invite
               <li
                 key={chat.id}
                 className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"

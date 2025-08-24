@@ -30,10 +30,12 @@ export default function ChatsPage({
 
   const {
     chats,
+    messages,
+
     loadingChats,
     loadingMessages,
     savingChat,
-    messages,
+  
     handleExitChat,
     handleDeleteChat,
     handleSaveChat,

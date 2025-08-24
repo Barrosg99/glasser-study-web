@@ -89,8 +89,6 @@ export function useChat({
           ? dictionary.toast.updateSuccess
           : dictionary.toast.createSuccess
       );
-      // setShowModal(false);
-      // resetForm();
     },
     onError: () => {
       toast.error(
@@ -311,9 +309,5 @@ export function useChat({
     handleManageInvitation,
     handleExitChat,
     handleGetMember,
-
-    // Utilitários
-    refetchChats,
-    stopPollingMessages,
   };
 }

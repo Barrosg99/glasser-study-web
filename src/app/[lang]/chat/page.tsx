@@ -1,6 +1,6 @@
 import { getDictionary } from "@/dictionaries";
 import type { Locale } from "../../../../i18n-config";
-import ChatsPage from "@/components/ChatsPage";
+import ChatsPage from "./components/ChatsPage";
 import Header from "@/components/Header";
 
 export default async function Page(props: {

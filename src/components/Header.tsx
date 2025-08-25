@@ -6,8 +6,9 @@ import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
+import NotificationModal, { Notification } from "./NotificationModal";
 
 export default function Header({
   dictionary,
@@ -19,8 +20,37 @@ export default function Header({
   const [token, setToken] = useLocalStorage<string>("token");
   const [hasMounted, setHasMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+
+  // Mock notifications data - replace with actual data from your backend
+  const [notifications] = useState<Notification[]>([
+    {
+      id: "1",
+      message: "New message from John Doe",
+      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      type: "info",
+      read: false,
+    },
+    {
+      id: "2",
+      message: "Your post received 5 new likes",
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      type: "success",
+      read: false,
+    },
+    {
+      id: "3",
+      message: "New comment on your post",
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+      type: "info",
+      read: true,
+    },
+  ]);
+
+  const notificationCount = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
     setHasMounted(true);
@@ -75,14 +105,36 @@ export default function Header({
           {token && (
             <>
               <div className="relative" ref={menuRef}>
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(!isMenuOpen);
-                  }}
-                  className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
-                >
-                  <Menu size={24} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
+                    className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
+                  >
+                    <Menu size={24} />
+                  </button>
+                  <div className="relative">
+                    <button
+                      ref={notificationButtonRef}
+                      onClick={() => {
+                        setIsNotificationModalOpen(!isNotificationModalOpen);
+                      }}
+                      className={`text-white p-2 rounded transition duration-300 ease-in-out ${
+                        isNotificationModalOpen
+                          ? "bg-[#c92121]"
+                          : "hover:bg-[#c92121]"
+                      }`}
+                    >
+                      <Bell size={24} />
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[18px] flex items-center justify-center border-2 border-white">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                </div>
                 <div
                   id="user-menu"
                   className={`${
@@ -124,6 +176,28 @@ export default function Header({
           )}
         </div>
       </div>
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        notifications={notifications}
+        excludeElement={notificationButtonRef.current}
+        dictionary={{
+          notifications: dictionary.notifications,
+          noNotifications: dictionary.noNotifications,
+          markAllAsRead: dictionary.markAllAsRead,
+        }}
+        onMarkAsRead={(id) => {
+          // Handle marking notification as read
+          // In a real app, you'd update the backend here
+          console.log(`Marking notification ${id} as read`);
+        }}
+        onMarkAllAsRead={() => {
+          // Handle marking all notifications as read
+          // In a real app, you'd update the backend here
+          console.log("Marking all notifications as read");
+        }}
+      />
     </header>
   );
 }

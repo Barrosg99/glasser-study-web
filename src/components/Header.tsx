@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import { Bell, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import NotificationModal, { Notification } from "./NotificationModal";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
+import notificationClient from "@/lib/notification-apollo-client";
 
 export default function Header({
   dictionary,
@@ -25,32 +27,157 @@ export default function Header({
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
-  // Mock notifications data - replace with actual data from your backend
-  const [notifications] = useState<Notification[]>([
-    {
-      id: "1",
-      message: "New message from John Doe",
-      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-      type: "info",
-      read: false,
-    },
-    {
-      id: "2",
-      message: "Your post received 5 new likes",
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      type: "success",
-      read: false,
-    },
-    {
-      id: "3",
-      message: "New comment on your post",
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-      type: "info",
-      read: true,
-    },
-  ]);
+  const GET_NOTIFICATIONS = gql`
+    query GetNotifications($limit: Int) {
+      myNotifications(limit: $limit) {
+        id
+        message
+        type
+        read
+        createdAt
+      }
+      countMyUnreadNotifications
+    }
+  `;
 
-  const notificationCount = notifications.filter((n) => !n.read).length;
+  const { data: notifications } = useQuery<{
+    myNotifications: Notification[];
+    countMyUnreadNotifications: number;
+  }>(GET_NOTIFICATIONS, {
+    client: notificationClient,
+    variables: {
+      limit: 3,
+    },
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
+
+  const READ_NOTIFICATION = gql`
+    mutation ReadNotification($id: String!) {
+      markNotificationAsRead(id: $id) {
+        id
+      }
+    }
+  `;
+
+  const [readNotification] = useMutation(READ_NOTIFICATION, {
+    client: notificationClient,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    update: (cache, { data: mutationData }) => {
+      const cachedData = cache.readQuery<{
+        myNotifications: Notification[];
+        countMyUnreadNotifications: number;
+      }>({
+        query: GET_NOTIFICATIONS,
+        variables: {
+          limit: 3,
+        },
+      });
+
+      if (cachedData) {
+        const { myNotifications, countMyUnreadNotifications } = cachedData;
+        cache.modify({
+          fields: {
+            myNotifications: () =>
+              myNotifications.map((notification: Notification) =>
+                notification.id === mutationData.markNotificationAsRead.id
+                  ? { ...notification, read: true }
+                  : notification
+              ),
+            countMyUnreadNotifications: () => countMyUnreadNotifications - 1,
+          },
+        });
+      }
+    },
+  });
+
+  const MARK_ALL_NOTIFICATIONS_AS_READ = gql`
+    mutation MarkAllNotificationsAsRead {
+      markAllNotificationsAsRead
+    }
+  `;
+
+  const [markAllNotificationsAsRead] = useMutation(
+    MARK_ALL_NOTIFICATIONS_AS_READ,
+    {
+      client: notificationClient,
+      context: {
+        headers: {
+          Authorization: token,
+        },
+      },
+      update: (cache) => {
+        cache.modify({
+          fields: {
+            myNotifications: () =>
+              notifications?.myNotifications?.map(
+                (notification: Notification) => ({
+                  ...notification,
+                  read: true,
+                })
+              ) || [],
+            countMyUnreadNotifications: () => 0,
+          },
+        });
+      },
+    }
+  );
+
+  const SUBSCRIBE_NOTIFICATIONS = gql`
+    subscription Subscription {
+      newNotification {
+        id
+        message
+        read
+        type
+        createdAt
+      }
+    }
+  `;
+
+  useSubscription(SUBSCRIBE_NOTIFICATIONS, {
+    client: notificationClient,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onData: ({ client, data }) => {
+      const notifications = client.readQuery({
+        query: GET_NOTIFICATIONS,
+        variables: {
+          limit: 3,
+        },
+      });
+
+      if (notifications) {
+        const oldNotifications = [...notifications.myNotifications];
+        if (oldNotifications.length >= 3) oldNotifications.pop();
+
+        client.writeQuery({
+          query: GET_NOTIFICATIONS,
+          variables: {
+            limit: 3,
+          },
+          data: {
+            myNotifications: [data.data.newNotification, ...oldNotifications],
+            countMyUnreadNotifications:
+              notifications?.countMyUnreadNotifications + 1,
+          },
+        });
+      }
+    },
+    shouldResubscribe: true,
+  });
+
+  const notificationCount = notifications?.countMyUnreadNotifications || 0;
 
   useEffect(() => {
     setHasMounted(true);
@@ -129,7 +256,7 @@ export default function Header({
                       <Bell size={24} />
                       {notificationCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[18px] flex items-center justify-center border-2 border-white">
-                          {notificationCount}
+                          {notificationCount > 3 ? "3+" : notificationCount}
                         </span>
                       )}
                     </button>
@@ -180,22 +307,23 @@ export default function Header({
       <NotificationModal
         isOpen={isNotificationModalOpen}
         onClose={() => setIsNotificationModalOpen(false)}
-        notifications={notifications}
+        notifications={
+          notifications?.myNotifications?.map((notification) => ({
+            ...notification,
+            timestamp: new Date(notification.createdAt),
+          })) || []
+        }
         excludeElement={notificationButtonRef.current}
         dictionary={{
           notifications: dictionary.notifications,
-          noNotifications: dictionary.noNotifications,
-          markAllAsRead: dictionary.markAllAsRead,
+          noNotifications: dictionary.notifications.noNotifications,
+          markAllAsRead: dictionary.notifications.markAllAsRead,
         }}
         onMarkAsRead={(id) => {
-          // Handle marking notification as read
-          // In a real app, you'd update the backend here
-          console.log(`Marking notification ${id} as read`);
+          readNotification({ variables: { id } });
         }}
         onMarkAllAsRead={() => {
-          // Handle marking all notifications as read
-          // In a real app, you'd update the backend here
-          console.log("Marking all notifications as read");
+          markAllNotificationsAsRead();
         }}
       />
     </header>

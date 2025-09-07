@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 export interface Notification {
   id: string;
   message: string;
-  timestamp: Date;
+  createdAt: string;
   type: "info" | "warning" | "error" | "success";
   read: boolean;
 }
@@ -18,7 +18,14 @@ interface NotificationModalProps {
   onMarkAsRead?: (id: string) => void;
   onMarkAllAsRead?: () => void;
   dictionary: {
-    notifications: string;
+    notifications: {
+      title: string;
+      noNotifications: string;
+      markAllAsRead: string;
+      options: {
+        [key: string]: string;
+      };
+    };
     noNotifications: string;
     markAllAsRead: string;
   };
@@ -77,9 +84,9 @@ export default function NotificationModal({
 
   if (!isOpen) return null;
 
-  const formatTimestamp = (timestamp: Date) => {
+  const formatTimestamp = (timestamp: string) => {
     const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
+    const diff = now.getTime() - new Date(timestamp).getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
@@ -89,7 +96,7 @@ export default function NotificationModal({
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
 
-    return timestamp.toLocaleDateString();
+    return new Date(timestamp).toLocaleDateString();
   };
 
   const getNotificationIcon = (type: Notification["type"]) => {
@@ -113,7 +120,7 @@ export default function NotificationModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
-            {dictionary.notifications}
+            {dictionary.notifications.title}
           </h2>
           <button
             onClick={onClose}
@@ -126,7 +133,7 @@ export default function NotificationModal({
         {notifications.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             <div className="text-4xl mb-2">🔔</div>
-            <p>{dictionary.noNotifications}</p>
+            <p>{dictionary.notifications.noNotifications}</p>
           </div>
         ) : (
           <>
@@ -136,7 +143,7 @@ export default function NotificationModal({
                   onClick={onMarkAllAsRead}
                   className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  {dictionary.markAllAsRead}
+                  {dictionary.notifications.markAllAsRead}
                 </button>
               </div>
             )}
@@ -148,7 +155,9 @@ export default function NotificationModal({
                   className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
                     !notification.read ? "bg-blue-50" : ""
                   }`}
-                  onClick={() => onMarkAsRead?.(notification.id)}
+                  onClick={() =>
+                    !notification.read && onMarkAsRead?.(notification.id)
+                  }
                 >
                   <div className="flex items-start gap-3">
                     <span className="text-lg">
@@ -160,10 +169,10 @@ export default function NotificationModal({
                           !notification.read ? "font-medium" : ""
                         }`}
                       >
-                        {notification.message}
+                        {dictionary.notifications.options[notification.message]}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {formatTimestamp(notification.timestamp)}
+                        {formatTimestamp(notification.createdAt)}
                       </p>
                     </div>
                     {!notification.read && (

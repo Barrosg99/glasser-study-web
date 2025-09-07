@@ -7,9 +7,14 @@
     "profile": "Perfil",
     "chat": "Chat",
     "posts": "Fórum",
-    "notifications": "Notificações",
-    "noNotifications": "Nenhuma notificação ainda",
-    "markAllAsRead": "Marcar todas como lidas"
+    "notifications": {
+      "title": "Notificações",
+      "noNotifications": "Nenhuma notificação ainda",
+      "markAllAsRead": "Marcar todas como lidas",
+      "options": {
+        "NEW_MESSAGE": "Você recebeu uma nova mensagem"
+      }
+    }
   },
   "home": {
     "body": {

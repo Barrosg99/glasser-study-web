@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import NotificationModal, { Notification } from "./NotificationModal";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import notificationClient from "@/lib/notification-apollo-client";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Header({
   dictionary,
@@ -26,6 +27,7 @@ export default function Header({
   const menuRef = useRef<HTMLDivElement>(null);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const { user } = useCurrentUser();
 
   const GET_NOTIFICATIONS = gql`
     query GetNotifications($limit: Int) {
@@ -261,6 +263,9 @@ export default function Header({
                       )}
                     </button>
                   </div>
+                  {user && (
+                    <span className="text-white font-medium">{dictionary.welcome} {user.name}</span>
+                  )}
                 </div>
                 <div
                   id="user-menu"

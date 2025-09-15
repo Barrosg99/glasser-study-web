@@ -15,6 +15,7 @@ import { useChat } from "../hooks/useChat";
 import { Chat, Member } from "../graphql/types";
 import ChatModal from "./ChatModal";
 import apolloClient from "@/lib/apollo-client";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function ChatsPage({
   dictionary,
@@ -32,7 +33,7 @@ export default function ChatsPage({
   const [token] = useLocalStorage<string>("token");
   const [newMessage, setNewMessage] = useState("");
   const [conversation, setConversation] = useState<Chat | null>(null);
-
+  const { user } = useCurrentUser();
   const [memberList, setMemberList] = useState<Member[]>([]);
 
   const {
@@ -173,7 +174,10 @@ export default function ChatsPage({
     const { data: memberData } = await handleGetMember(member);
 
     if (memberData?.user) {
-      if (memberList.some((m) => m.user.id === memberData.user.id)) {
+      if (memberData.user.id === user?.id) {
+        toast.error("You cannot add yourself to the chat");
+        return;
+      } else if (memberList.some((m) => m.user.id === memberData.user.id)) {
         toast.error("Member already added");
         return;
       } else {

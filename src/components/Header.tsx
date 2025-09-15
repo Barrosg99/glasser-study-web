@@ -55,6 +55,7 @@ export default function Header({
         Authorization: token,
       },
     },
+    skip: !token,
   });
 
   const READ_NOTIFICATION = gql`
@@ -146,6 +147,7 @@ export default function Header({
 
   useSubscription(SUBSCRIBE_NOTIFICATIONS, {
     client: notificationClient,
+    skip: !token,
     context: {
       headers: {
         Authorization: token,

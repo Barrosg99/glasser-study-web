@@ -7,10 +7,11 @@ const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_NOTIFICATION_GRAPHQL_ENDPOINT,
 });
 
-const token =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("token") || "")
-    : "";
+let token = "";
+
+if (typeof window !== "undefined") {
+  token = JSON.parse(localStorage.getItem("token") || "{}");
+}
 
 const wsLink = new GraphQLWsLink(
   createClient({

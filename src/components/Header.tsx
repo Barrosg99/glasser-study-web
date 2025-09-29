@@ -266,7 +266,9 @@ export default function Header({
                     </button>
                   </div>
                   {user && (
-                    <span className="text-white font-medium">{dictionary.welcome} {user.name}</span>
+                    <span className="text-white font-medium">
+                      {dictionary.welcome} {user.name}
+                    </span>
                   )}
                 </div>
                 <div
@@ -292,6 +294,12 @@ export default function Header({
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     {dictionary.posts}
+                  </LocaleLink>
+                  <LocaleLink
+                    href="/goals"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {dictionary.goals}
                   </LocaleLink>
                   <button
                     onClick={() => {

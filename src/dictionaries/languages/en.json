@@ -7,6 +7,7 @@
     "profile": "Profile",
     "chat": "Chat",
     "posts": "Forum",
+    "goals": "Goals",
     "welcome": "Hello",
     "notifications": {
       "title": "Notifications",
@@ -162,6 +163,53 @@
       "noMessages": "No messages yet",
       "typeMessage": "Type your message...",
       "send": "Send"
+    }
+  },
+  "goals": {
+    "title": "Study Goals",
+    "newGoal": "New Goal",
+    "noGoals": "No goals yet, try creating one...",
+    "tasks": "Tasks",
+    "loading": "Loading...",
+    "modal": {
+      "form": {
+        "delete": "Delete",
+        "title": {
+          "label": "Title",
+          "placeholder": "Ex: Advanced Mathematics"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Describe the goal clearly and objectively."
+        },
+        "tasks": {
+          "label": "Tasks",
+          "name": {
+            "label": "Task Name",
+            "placeholder": "Ex: Solve derivatives exercises"
+          },
+          "link": {
+            "label": "Task Link",
+            "placeholder": "Ex: https://www.google.com"
+          },
+          "add": "Add Task",
+          "remove": "Remove Task",
+          "empty": "No tasks yet, try adding one..."
+        }
+      },
+      "submit": {
+        "create": "Create Goal",
+        "update": "Update Goal",
+        "creating": "Creating...",
+        "updating": "Updating..."
+      },
+      "toast": {
+        "createSuccess": "Goal created successfully",
+        "updateSuccess": "Goal updated successfully",
+        "createError": "Error creating goal",
+        "updateError": "Error updating goal",
+        "deleteSuccess": "Goal deleted successfully"
+      }
     }
   },
   "posts": {

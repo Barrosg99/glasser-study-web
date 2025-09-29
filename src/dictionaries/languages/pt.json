@@ -7,6 +7,7 @@
     "profile": "Perfil",
     "chat": "Chat",
     "posts": "Fórum",
+    "goals": "Metas",
     "welcome": "Olá",
     "notifications": {
       "title": "Notificações",
@@ -159,6 +160,53 @@
       "noMessages": "Nenhuma mensagem ainda",
       "typeMessage": "Digite sua mensagem...",
       "send": "Enviar"
+    }
+  },
+  "goals": {
+    "title": "Metas de Estudo",
+    "newGoal": "Nova Meta",
+    "noGoals": "Nenhuma meta ainda, tente criar uma...",
+    "tasks": "Tarefas",
+    "loading": "Carregando...",
+    "modal": {
+      "form": {
+        "delete": "Excluir",
+        "title": {
+          "label": "Título",
+          "placeholder": "Ex: Matemática Avançada"
+        },
+        "description": {
+          "label": "Descrição",
+          "placeholder": "Descreva a meta claramente e objetivamente."
+        },
+        "tasks": {
+          "label": "Tarefas",
+          "name": {
+            "label": "Nome da Tarefa",
+            "placeholder": "Ex: Resolver exercícios de derivadas"
+          },
+          "link": {
+            "label": "Link da Tarefa",
+            "placeholder": "Ex: https://www.google.com"
+          },
+          "add": "Adicionar Tarefa",
+          "remove": "Remover Tarefa",
+          "empty": "Nenhuma tarefa ainda, tente adicionar uma..."
+        }
+      },
+      "submit": {
+        "create": "Criar Meta",
+        "update": "Atualizar Meta",
+        "creating": "Criando...",
+        "updating": "Atualizando..."
+      },
+      "toast": {
+        "createSuccess": "Meta criada com sucesso",
+        "updateSuccess": "Meta atualizada com sucesso",
+        "createError": "Erro ao criar meta",
+        "updateError": "Erro ao atualizar meta",
+        "deleteSuccess": "Meta excluída com sucesso"
+      }
     }
   },
   "posts": {

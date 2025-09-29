@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getDictionary } from "@/dictionaries";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const GET_USER = gql`
   query GetUser {
@@ -34,6 +35,7 @@ export default function ProfileForm({
   dictionary: Awaited<ReturnType<typeof getDictionary>>["profile"];
 }) {
   const { body } = dictionary;
+  const router = useRouter();
   const [token] = useLocalStorage<string>("token");
 
   const [name, setName] = useState("");
@@ -41,6 +43,12 @@ export default function ProfileForm({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const goalsValues = ["LEARN", "TEACH", "GROUP_STUDY"];
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  });
 
   const { data, loading: loadingUser } = useQuery(GET_USER, {
     context: {

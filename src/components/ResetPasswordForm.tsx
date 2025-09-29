@@ -45,7 +45,7 @@ export default function ResetPasswordForm({
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 pt-[74px]">
       <div className="w-full px-15 pt-5 md:w-1/2 bg-[#FFFFFF]">
         <h1 className="text-black text-center text-4xl mb-10  md:text-left">
           {body.title}

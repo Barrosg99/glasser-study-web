@@ -5,7 +5,7 @@
     "logout": "Sair",
     "logoutSuccess": "Deslogado com sucesso",
     "profile": "Perfil",
-    "groups": "Grupos",
+    "chat": "Chat",
     "posts": "Fórum"
   },
   "home": {
@@ -99,14 +99,14 @@
       "submit": { "loading": "Atualizando...", "text": "Atualizar Perfil" }
     }
   },
-  "groups": {
+  "chat": {
     "search": {
-      "placeholder": "Pesquise por um grupo..."
+      "placeholder": "Pesquise por um chat..."
     },
     "create": {
-      "title": "Criar Grupo",
+      "title": "Criar Chat",
       "name": {
-        "label": "Nome do Grupo",
+        "label": "Nome do Chat",
         "placeholder": "Ex.: Matemática, Biologia"
       },
       "description": {
@@ -118,32 +118,32 @@
         "placeholder": "E-mails dos membros separados por vírgula"
       },
       "submit": {
-        "create": "Criar Grupo",
-        "update": "Atualizar Grupo",
+        "create": "Criar Chat",
+        "update": "Atualizar Chat",
         "creating": "Criando...",
         "updating": "Atualizando..."
       },
-      "delete": "Remover Grupo"
+      "delete": "Remover Chat"
     },
     "list": {
-      "loading": "Carregando grupos...",
-      "empty": "Você não tem grupos ainda, tente criar um...",
-      "emptySearch": "Nenhum grupo encontrado com esta busca"
+      "loading": "Carregando chats...",
+      "empty": "Você não tem chats ainda, tente criar um...",
+      "emptySearch": "Nenhum chat encontrado com esta busca"
     },
     "toast": {
-      "createSuccess": "Grupo criado com sucesso!",
-      "updateSuccess": "Grupo atualizado com sucesso!",
-      "deleteSuccess": "Grupo removido com sucesso!",
-      "createError": "Erro ao criar grupo",
-      "updateError": "Erro ao atualizar grupo",
-      "deleteError": "Erro ao remover grupo",
-      "deleteConfirm": "Tem certeza que deseja remover este grupo?",
+      "createSuccess": "Chat criado com sucesso!",
+      "updateSuccess": "Chat atualizado com sucesso!",
+      "deleteSuccess": "Chat removido com sucesso!",
+      "createError": "Erro ao criar chat",
+      "updateError": "Erro ao atualizar chat",
+      "deleteError": "Erro ao remover chat",
+      "deleteConfirm": "Tem certeza que deseja remover este chat?",
       "deleteConfirmYes": "Sim",
       "deleteConfirmNo": "Não"
     },
     "messages": {
-      "selectGroup": "Selecione um grupo para ver as mensagens",
-      "selectGroupToView": "Selecione um grupo para ver as mensagens",
+      "selectChat": "Selecione um chat para ver as mensagens",
+      "selectChatToView": "Selecione um chat para ver as mensagens",
       "noMessages": "Nenhuma mensagem ainda",
       "typeMessage": "Digite sua mensagem...",
       "send": "Enviar"

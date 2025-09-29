@@ -15,6 +15,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getDictionary } from "@/dictionaries";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export interface Post {
   id: string;
@@ -88,6 +89,7 @@ export default function PostsList({
 }: {
   dictionary: Awaited<ReturnType<typeof getDictionary>>["posts"];
 }) {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -103,6 +105,12 @@ export default function PostsList({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const subjectDropdownRef = useRef<HTMLDivElement>(null);
   const materialTypeDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    }
+  });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

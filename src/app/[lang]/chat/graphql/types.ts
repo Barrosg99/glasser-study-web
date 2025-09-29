@@ -5,6 +5,7 @@ export interface Chat {
   members: Member[];
   isModerator: boolean;
   isInvited: boolean;
+  hasRead: boolean;
 }
 
 export interface Message {

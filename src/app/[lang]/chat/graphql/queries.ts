@@ -8,6 +8,7 @@ export const GET_CHATS = gql`
       description
       isModerator
       isInvited
+      hasRead
       members {
         user {
           id

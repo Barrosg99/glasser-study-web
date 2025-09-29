@@ -8,6 +8,7 @@ export const SAVE_CHAT = gql`
       description
       isModerator
       isInvited
+      hasRead
       members {
         user {
           id

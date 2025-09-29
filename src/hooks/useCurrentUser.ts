@@ -17,7 +17,7 @@ export function useCurrentUser() {
 
   const { data, loading, error } = useQuery(GET_USER, {
     skip: !token,
-    context: {
+  context: {
       headers: {
         Authorization: token,
       },

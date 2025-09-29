@@ -6,8 +6,12 @@ import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
+import NotificationModal, { Notification } from "./NotificationModal";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
+import notificationClient from "@/lib/notification-apollo-client";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Header({
   dictionary,
@@ -19,8 +23,165 @@ export default function Header({
   const [token, setToken] = useLocalStorage<string>("token");
   const [hasMounted, setHasMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const { user } = useCurrentUser();
+
+  const GET_NOTIFICATIONS = gql`
+    query GetNotifications($limit: Int) {
+      myNotifications(limit: $limit) {
+        id
+        message
+        type
+        read
+        createdAt
+      }
+      countMyUnreadNotifications
+    }
+  `;
+
+  const { data: notifications } = useQuery<{
+    myNotifications: Notification[];
+    countMyUnreadNotifications: number;
+  }>(GET_NOTIFICATIONS, {
+    client: notificationClient,
+    variables: {
+      limit: 3,
+    },
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    skip: !token,
+  });
+
+  const READ_NOTIFICATION = gql`
+    mutation ReadNotification($id: String!) {
+      markNotificationAsRead(id: $id) {
+        id
+      }
+    }
+  `;
+
+  const [readNotification] = useMutation(READ_NOTIFICATION, {
+    client: notificationClient,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    update: (cache, { data: mutationData }) => {
+      const cachedData = cache.readQuery<{
+        myNotifications: Notification[];
+        countMyUnreadNotifications: number;
+      }>({
+        query: GET_NOTIFICATIONS,
+        variables: {
+          limit: 3,
+        },
+      });
+
+      if (cachedData) {
+        const { myNotifications, countMyUnreadNotifications } = cachedData;
+        cache.modify({
+          fields: {
+            myNotifications: () =>
+              myNotifications.map((notification: Notification) =>
+                notification.id === mutationData.markNotificationAsRead.id
+                  ? { ...notification, read: true }
+                  : notification
+              ),
+            countMyUnreadNotifications: () => countMyUnreadNotifications - 1,
+          },
+        });
+      }
+    },
+  });
+
+  const MARK_ALL_NOTIFICATIONS_AS_READ = gql`
+    mutation MarkAllNotificationsAsRead {
+      markAllNotificationsAsRead
+    }
+  `;
+
+  const [markAllNotificationsAsRead] = useMutation(
+    MARK_ALL_NOTIFICATIONS_AS_READ,
+    {
+      client: notificationClient,
+      context: {
+        headers: {
+          Authorization: token,
+        },
+      },
+      update: (cache) => {
+        cache.modify({
+          fields: {
+            myNotifications: () =>
+              notifications?.myNotifications?.map(
+                (notification: Notification) => ({
+                  ...notification,
+                  read: true,
+                })
+              ) || [],
+            countMyUnreadNotifications: () => 0,
+          },
+        });
+      },
+    }
+  );
+
+  const SUBSCRIBE_NOTIFICATIONS = gql`
+    subscription Subscription {
+      newNotification {
+        id
+        message
+        read
+        type
+        createdAt
+      }
+    }
+  `;
+
+  useSubscription(SUBSCRIBE_NOTIFICATIONS, {
+    client: notificationClient,
+    skip: !token,
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+    onData: ({ client, data }) => {
+      const notifications = client.readQuery({
+        query: GET_NOTIFICATIONS,
+        variables: {
+          limit: 3,
+        },
+      });
+
+      if (notifications) {
+        const oldNotifications = [...notifications.myNotifications];
+        if (oldNotifications.length >= 3) oldNotifications.pop();
+
+        client.writeQuery({
+          query: GET_NOTIFICATIONS,
+          variables: {
+            limit: 3,
+          },
+          data: {
+            myNotifications: [data.data.newNotification, ...oldNotifications],
+            countMyUnreadNotifications:
+              notifications?.countMyUnreadNotifications + 1,
+          },
+        });
+      }
+    },
+    shouldResubscribe: true,
+  });
+
+  const notificationCount = notifications?.countMyUnreadNotifications || 0;
 
   useEffect(() => {
     setHasMounted(true);
@@ -75,14 +236,39 @@ export default function Header({
           {token && (
             <>
               <div className="relative" ref={menuRef}>
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(!isMenuOpen);
-                  }}
-                  className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
-                >
-                  <Menu size={24} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
+                    className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
+                  >
+                    <Menu size={24} />
+                  </button>
+                  <div className="relative">
+                    <button
+                      ref={notificationButtonRef}
+                      onClick={() => {
+                        setIsNotificationModalOpen(!isNotificationModalOpen);
+                      }}
+                      className={`text-white p-2 rounded transition duration-300 ease-in-out ${
+                        isNotificationModalOpen
+                          ? "bg-[#c92121]"
+                          : "hover:bg-[#c92121]"
+                      }`}
+                    >
+                      <Bell size={24} />
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[18px] flex items-center justify-center border-2 border-white">
+                          {notificationCount > 3 ? "3+" : notificationCount}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                  {user && (
+                    <span className="text-white font-medium">{dictionary.welcome} {user.name}</span>
+                  )}
+                </div>
                 <div
                   id="user-menu"
                   className={`${
@@ -124,6 +310,29 @@ export default function Header({
           )}
         </div>
       </div>
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        notifications={
+          notifications?.myNotifications?.map((notification) => ({
+            ...notification,
+            timestamp: new Date(notification.createdAt),
+          })) || []
+        }
+        excludeElement={notificationButtonRef.current}
+        dictionary={{
+          notifications: dictionary.notifications,
+          noNotifications: dictionary.notifications.noNotifications,
+          markAllAsRead: dictionary.notifications.markAllAsRead,
+        }}
+        onMarkAsRead={(id) => {
+          readNotification({ variables: { id } });
+        }}
+        onMarkAllAsRead={() => {
+          markAllNotificationsAsRead();
+        }}
+      />
     </header>
   );
 }

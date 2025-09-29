@@ -41,6 +41,7 @@ export function useChat({
     variables: {
       search,
     },
+    fetchPolicy: "network-only",
   });
 
   // Lazy query para buscar mensagens

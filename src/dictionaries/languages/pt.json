@@ -6,7 +6,19 @@
     "logoutSuccess": "Deslogado com sucesso",
     "profile": "Perfil",
     "chat": "Chat",
-    "posts": "Fórum"
+    "posts": "Fórum",
+    "welcome": "Olá",
+    "notifications": {
+      "title": "Notificações",
+      "noNotifications": "Nenhuma notificação ainda",
+      "markAllAsRead": "Marcar todas como lidas",
+      "options": {
+        "NEW_MESSAGE": "Você recebeu uma nova mensagem",
+        "NEW_CHAT": "Você foi convidado para um novo chat",
+        "NEW_COMMENT": "Você recebeu um novo comentário",
+        "NEW_LIKE": "Você recebeu um novo like"
+      }
+    }
   },
   "home": {
     "body": {

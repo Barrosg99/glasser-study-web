@@ -1,5 +1,11 @@
 "use client";
-import { Users, Plus, MoreVertical, UserRoundCog } from "lucide-react";
+import {
+  Users,
+  Plus,
+  MoreVertical,
+  UserRoundCog,
+  MessageCirclePlus,
+} from "lucide-react";
 import { getDictionary } from "@/dictionaries";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -8,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { useChat } from "../hooks/useChat";
 import { Chat, Member } from "../graphql/types";
 import ChatModal from "./ChatModal";
+import apolloClient from "@/lib/apollo-client";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function ChatsPage({
   dictionary,
@@ -25,17 +33,15 @@ export default function ChatsPage({
   const [token] = useLocalStorage<string>("token");
   const [newMessage, setNewMessage] = useState("");
   const [conversation, setConversation] = useState<Chat | null>(null);
-
+  const { user } = useCurrentUser();
   const [memberList, setMemberList] = useState<Member[]>([]);
 
   const {
     chats,
     messages,
-
     loadingChats,
     loadingMessages,
     savingChat,
-  
     handleExitChat,
     handleDeleteChat,
     handleSaveChat,
@@ -168,7 +174,10 @@ export default function ChatsPage({
     const { data: memberData } = await handleGetMember(member);
 
     if (memberData?.user) {
-      if (memberList.some((m) => m.user.id === memberData.user.id)) {
+      if (memberData.user.id === user?.id) {
+        toast.error("You cannot add yourself to the chat");
+        return;
+      } else if (memberList.some((m) => m.user.id === memberData.user.id)) {
         toast.error("Member already added");
         return;
       } else {
@@ -280,6 +289,14 @@ export default function ChatsPage({
                     key={chat.id}
                     className="flex items-start gap-3 bg-white border border-gray-200 p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
                     onClick={() => {
+                      // update the member has read to true on the apollo cache
+                      apolloClient.cache.modify({
+                        id: apolloClient.cache.identify({
+                          __typename: "Chat",
+                          id: chat.id,
+                        }),
+                        fields: { hasRead: () => true },
+                      });
                       setConversation(chat);
                     }}
                   >
@@ -292,6 +309,11 @@ export default function ChatsPage({
                         {chat.description}
                       </div>
                     </div>
+                    {!chat.hasRead && (
+                      <div className="text-sm text-gray-700">
+                        <MessageCirclePlus size={30} className="text-red-500" />
+                      </div>
+                    )}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

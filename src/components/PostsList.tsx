@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Search,
   ChevronDown,
+  TriangleAlert,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import PostModal from "./PostModal";
@@ -16,6 +17,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { getDictionary } from "@/dictionaries";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useReportModal } from "./ReportModal";
 
 export interface Post {
   id: string;
@@ -102,6 +104,7 @@ export default function PostsList({
     string | null
   >(null);
   const [token] = useLocalStorage<string>("token");
+  const { open: openReportModal, modal: reportModal } = useReportModal();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const subjectDropdownRef = useRef<HTMLDivElement>(null);
   const materialTypeDropdownRef = useRef<HTMLDivElement>(null);
@@ -404,12 +407,12 @@ export default function PostsList({
                     </h2>
                     <div className="flex text-xl items-center gap-3">
                       <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
-                      {post.materials?.map((material) => (
+                      {post.materials?.map((material, index) => (
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
                           href={material.link}
-                          key={material.link}
+                          key={index}
                           className="font-semibold underline flex items-center gap-1 hover:text-gray-600"
                         >
                           {material.name}
@@ -429,6 +432,16 @@ export default function PostsList({
                       }}
                     >
                       <Pencil size={20} />
+                    </button>
+                  )}
+                  {!post.isAuthor && (
+                    <button
+                      className="text-gray-400 hover:text-gray-600"
+                      onClick={() => {
+                        openReportModal({ id: post.id, name: "post" });
+                      }}
+                    >
+                      <TriangleAlert size={20} />
                     </button>
                   )}
                 </div>
@@ -478,6 +491,7 @@ export default function PostsList({
             ))
           )}
         </div>
+        {reportModal}
       </div>
     </main>
   );

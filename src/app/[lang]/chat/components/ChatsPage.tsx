@@ -5,6 +5,7 @@ import {
   MoreVertical,
   UserRoundCog,
   MessageCirclePlus,
+  TriangleAlert,
 } from "lucide-react";
 import { getDictionary } from "@/dictionaries";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { Chat, Member } from "../graphql/types";
 import ChatModal from "./ChatModal";
 import apolloClient from "@/lib/apollo-client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useReportModal } from "@/components/ReportModal";
 
 export default function ChatsPage({
   dictionary,
@@ -35,7 +37,7 @@ export default function ChatsPage({
   const [conversation, setConversation] = useState<Chat | null>(null);
   const { user } = useCurrentUser();
   const [memberList, setMemberList] = useState<Member[]>([]);
-
+  const { open: openReportModal, modal: reportModal } = useReportModal();
   const {
     chats,
     messages,
@@ -356,7 +358,7 @@ export default function ChatsPage({
                   return (
                     <div
                       key={message.id}
-                      className={`flex flex-col space-y-1 max-w-[50%] ${
+                      className={`group flex flex-col space-y-1 max-w-[50%] ${
                         isCurrentUser ? "ml-auto" : "mr-auto"
                       }`}
                     >
@@ -371,6 +373,19 @@ export default function ChatsPage({
                         <span className="text-xs text-gray-500">
                           {new Date(message.createdAt).toLocaleTimeString()}
                         </span>
+                        {!isCurrentUser && (
+                          <button
+                            className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-opacity duration-200"
+                            onClick={() => {
+                              openReportModal({
+                                id: message.id,
+                                name: "MESSAGE",
+                              });
+                            }}
+                          >
+                            <TriangleAlert size={20} />
+                          </button>
+                        )}
                       </div>
                       <div
                         className={`rounded-lg p-3 ${
@@ -409,6 +424,7 @@ export default function ChatsPage({
           </div>
         )}
       </main>
+      {reportModal}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import NotificationModal, { Notification } from "./NotificationModal";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import notificationClient from "@/lib/notification-apollo-client";
+import client from "@/lib/apollo-client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Header({
@@ -306,6 +307,8 @@ export default function Header({
                       setToken(undefined);
                       toast.success(dictionary.logoutSuccess);
                       setIsMenuOpen(false);
+                      client.clearStore();
+                      notificationClient.clearStore();
                       router.push("/login");
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

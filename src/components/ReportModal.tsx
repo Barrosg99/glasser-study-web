@@ -1,36 +1,57 @@
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { gql, useMutation } from "@apollo/client";
 import React, { useState, useCallback } from "react";
+import { toast } from "react-hot-toast";
 
 type ReportModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  entity: { id: string; name: string };
 };
 
-const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose }) => {
+const CREATE_REPORT_MUTATION = gql`
+  mutation CreateReport($saveReportDto: SaveReportDto!) {
+    createReport(saveReportDto: $saveReportDto) {
+      id
+    }
+  }
+`;
+
+const ReportModal: React.FC<ReportModalProps> = ({
+  isOpen,
+  onClose,
+  entity,
+}) => {
+  const [token] = useLocalStorage<string>("token");
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [createReport, { loading }] = useMutation(CREATE_REPORT_MUTATION, {
+    variables: {
+      saveReportDto: {
+        entity: entity.name,
+        entityId: entity.id,
+        reason,
+        description: details,
+      },
+    },
+    context: {
+      headers: {
+        Authorization: token,
+      },
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
     try {
-      // if (onSubmit) {
-      //   await onSubmit({ reason, details });
-      // }
-      setSuccess(true);
+      await createReport();
       setReason("");
       setDetails("");
-      setTimeout(() => {
-        setSuccess(false);
-        onClose();
-      }, 1200);
+      onClose();
+      toast.success("Denúncia enviada com sucesso.");
     } catch {
-      setError("Erro ao enviar denúncia.");
-    } finally {
-      setLoading(false);
+      toast.error("Erro ao enviar denúncia.");
     }
   };
 
@@ -118,16 +139,6 @@ const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose }) => {
               placeholder="Descreva o motivo da denúncia"
             />
           </label>
-          {error && (
-            <div style={{ color: "red", marginBottom: 8, fontSize: 14 }}>
-              {error}
-            </div>
-          )}
-          {success && (
-            <div style={{ color: "green", marginBottom: 8, fontSize: 14 }}>
-              Denúncia enviada!
-            </div>
-          )}
           <button
             type="submit"
             disabled={loading}
@@ -153,12 +164,18 @@ const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose }) => {
 
 export function useReportModal() {
   const [isOpen, setIsOpen] = useState(false);
-  // Estado para receber dados do report(postId, userId, etc...)
+  const [entity, setEntity] = useState<{ id: string; name: string }>({
+    id: "",
+    name: "",
+  });
 
-  const open = useCallback(() => setIsOpen(true), []);
+  const open = useCallback(({ id, name }: { id: string; name: string }) => {
+    setIsOpen(true);
+    setEntity({ id, name });
+  }, []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  const modal = <ReportModal isOpen={isOpen} onClose={close} />;
+  const modal = <ReportModal isOpen={isOpen} onClose={close} entity={entity} />;
 
   return { open, close, modal };
 }

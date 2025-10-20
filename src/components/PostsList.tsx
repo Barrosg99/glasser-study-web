@@ -407,12 +407,12 @@ export default function PostsList({
                     </h2>
                     <div className="flex text-xl items-center gap-3">
                       <h3 className="font-semibold mt-1 mr-5">{post.title}</h3>
-                      {post.materials?.map((material) => (
+                      {post.materials?.map((material, index) => (
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
                           href={material.link}
-                          key={material.link}
+                          key={index}
                           className="font-semibold underline flex items-center gap-1 hover:text-gray-600"
                         >
                           {material.name}
@@ -438,7 +438,7 @@ export default function PostsList({
                     <button
                       className="text-gray-400 hover:text-gray-600"
                       onClick={() => {
-                        openReportModal();
+                        openReportModal({ id: post.id, name: "post" });
                       }}
                     >
                       <TriangleAlert size={20} />

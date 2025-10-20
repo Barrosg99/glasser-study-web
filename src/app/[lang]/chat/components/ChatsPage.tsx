@@ -377,7 +377,10 @@ export default function ChatsPage({
                           <button
                             className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-opacity duration-200"
                             onClick={() => {
-                              openReportModal();
+                              openReportModal({
+                                id: message.id,
+                                name: "MESSAGE",
+                              });
                             }}
                           >
                             <TriangleAlert size={20} />

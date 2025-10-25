@@ -10,6 +10,7 @@ const GET_USER = gql`
       name
       email
       goal
+      profileImageUrl
     }
   }
 `;

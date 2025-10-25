@@ -6,13 +6,14 @@ import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { Bell, Menu } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useRouter } from "next/navigation";
 import NotificationModal, { Notification } from "./NotificationModal";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import notificationClient from "@/lib/notification-apollo-client";
 import client from "@/lib/apollo-client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import Image from "next/image";
 
 export default function Header({
   dictionary,
@@ -238,14 +239,27 @@ export default function Header({
             <>
               <div className="relative" ref={menuRef}>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(!isMenuOpen);
-                    }}
-                    className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
-                  >
-                    <Menu size={24} />
-                  </button>
+                  {user && (
+                    <span className="text-white font-medium">
+                      {dictionary.welcome} {user.name}
+                    </span>
+                  )}
+                  {user && (
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(!isMenuOpen);
+                      }}
+                      className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
+                    >
+                      <Image
+                        src={user?.profileImageUrl}
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    </button>
+                  )}
                   <div className="relative">
                     <button
                       ref={notificationButtonRef}
@@ -266,11 +280,6 @@ export default function Header({
                       )}
                     </button>
                   </div>
-                  {user && (
-                    <span className="text-white font-medium">
-                      {dictionary.welcome} {user.name}
-                    </span>
-                  )}
                 </div>
                 <div
                   id="user-menu"

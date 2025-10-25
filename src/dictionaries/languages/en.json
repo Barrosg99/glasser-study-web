@@ -112,6 +112,10 @@
         "label": "Confirm New Password",
         "placeholder": "Confirm new password"
       },
+      "profileImage": {
+        "label": "Change photo",
+        "placeholder": "No image"
+      },
       "submit": { "loading": "Updating...", "text": "Update Profile" }
     }
   },

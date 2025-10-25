@@ -109,6 +109,10 @@
         "label": "Confirmar Nova Senha",
         "placeholder": "Confirme nova senha"
       },
+      "profileImage": {
+        "label": "Trocar foto",
+        "placeholder": "Nenhuma imagem"
+      },
       "submit": { "loading": "Atualizando...", "text": "Atualizar Perfil" }
     }
   },

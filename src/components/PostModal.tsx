@@ -81,6 +81,11 @@ export default function PostModal({
       toast.success(
         post ? dictionary.toast.updateSuccess : dictionary.toast.createSuccess
       );
+      setSubject("");
+      setTitle("");
+      setDescription("");
+      setTags("");
+      setMaterials([]);
       onClose();
     },
     onError: () => {

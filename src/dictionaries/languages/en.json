@@ -159,7 +159,11 @@
       "deleteError": "Error removing chat",
       "deleteConfirm": "Are you sure you want to remove this chat?",
       "deleteConfirmYes": "Yes",
-      "deleteConfirmNo": "No"
+      "deleteConfirmNo": "No",
+      "memberNotFound": "Member not found",
+      "manageInvitationError": "Error managing invitation",
+      "exitChatSuccess": "Chat exited successfully",
+      "exitChatError": "Error exiting chat"
     },
     "messages": {
       "selectChat": "Select a chat to view messages",

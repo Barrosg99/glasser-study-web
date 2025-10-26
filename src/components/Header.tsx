@@ -6,7 +6,7 @@ import LocaleLink from "./LocaleLink";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { Bell } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import NotificationModal, { Notification } from "./NotificationModal";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
@@ -251,13 +251,17 @@ export default function Header({
                       }}
                       className="text-white p-2 hover:bg-[#c92121] rounded transition duration-300 ease-in-out"
                     >
-                      <Image
-                        src={user?.profileImageUrl}
-                        alt="Profile"
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
+                      {user?.profileImageUrl ? (
+                        <Image
+                          src={user?.profileImageUrl}
+                          alt="Profile"
+                          width={32}
+                          height={32}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <User size={24} />
+                      )}
                     </button>
                   )}
                   <div className="relative">

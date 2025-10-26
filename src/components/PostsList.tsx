@@ -438,7 +438,7 @@ export default function PostsList({
                     <button
                       className="text-gray-400 hover:text-gray-600"
                       onClick={() => {
-                        openReportModal({ id: post.id, name: "post" });
+                        openReportModal({ id: post.id, name: "POST" });
                       }}
                     >
                       <TriangleAlert size={20} />

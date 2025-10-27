@@ -25,7 +25,49 @@
     "body": {
       "title": "Apoio no seu estudo, com organização e colaboração!",
       "description": "Organize suas metas de estudo, conecte-se com colegas e compartilhe materiais para otimizar sua preparação para vestibulares e concursos. A plataforma oferece um ambiente de apoio e colaboração, tornando sua jornada de estudos mais eficiente e motivadora.",
-      "findGroup": "Encontrar um Grupo"
+      "loggedButton": "Ver publicações",
+      "notLoggedButton": "Venha estudar conosco!"
+    },
+    "testimonials": {
+      "title": "Depoimentos de estudantes",
+      "testimonial1": {
+        "text": "A melhor plataforma para estudar, consegui encontrar os melhores materiais para meus estudos e os melhores grupos para estudar. Devia definitivamente tirar um 10 no TCC.",
+        "name": "Aluno Imparcial",
+        "description": "Estudante"
+      },
+      "testimonial2": {
+        "text": "Simplesmente a melhor! Consegui trocar informações com outros estudantes e receber ajuda nos meus estudos. Se eu fosse um professor avaliando a plataforma, eu daria um 10.",
+        "name": "Outro Aluno Imparcial",
+        "description": "Estudante"
+      }
+    },
+    "features": {
+      "title": "Como podemos ajudar no seu estudo",
+      "subtitle": "Funcionalidades para melhorar sua rotina de aprendizagem",
+      "feature1": {
+        "title": "Metas de Estudo",
+        "description": "Defina e acompanhe suas metas de estudo, visualize seu progresso e organize suas tarefas de maneira prática."
+      },
+      "feature2": {
+        "title": "Grupos de Estudo",
+        "description": "Crie grupos privados com colegas para estudar juntos e trocar conhecimento de forma organizada e eficaz."
+      },
+      "feature3": {
+        "title": "Sessões Individuais",
+        "description": "Agende e participe de sessões de estudo personalizadas com outro estudante, focadas nos seus objetivos de aprendizado."
+      },
+      "feature4": {
+        "title": "Fórum Colaborativo",
+        "description": "Compartilhe materiais, tire dúvidas e interaja com outros estudantes para enriquecer seu aprendizado."
+      },
+      "feature5": {
+        "title": "Busca de Materiais",
+        "description": "Pesquise e descubra materiais de estudo relevantes rapidamente, com filtros personalizados para facilitar sua busca conforme suas necessidades e interesses."
+      },
+      "feature6": {
+        "title": "Recomendação de Materiais",
+        "description": "Receba sugestões personalizadas de materiais de estudo com base no seu progresso, metas e preferências para otimizar sua preparação e aprendizado."
+      }
     }
   },
   "login": {

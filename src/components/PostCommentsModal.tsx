@@ -65,6 +65,7 @@ interface PostCommentsModalProps {
       fetch: string;
       delete: string;
     };
+    loading: string;
   };
 }
 
@@ -163,7 +164,9 @@ export default function PostCommentsModal({
 
         <div className="flex-1 overflow-y-auto mb-4">
           {loading ? (
-            <div className="text-center text-gray-500">Loading...</div>
+            <div className="text-center text-gray-500">
+              {dictionary.loading}
+            </div>
           ) : error ? (
             <div className="text-center text-red-500">
               {dictionary.errors.fetch}

@@ -120,10 +120,13 @@ export default function ProfileForm({
     if (data?.me) {
       setName(data.me.name);
       setGoal(data.me.goal);
-      const bustableUrl = `${
-        data.me.profileImageUrl
-      }?v=${new Date().getTime()}`;
-      setCurrentImageUrl(bustableUrl);
+
+      if (data.me.profileImageUrl) {
+        const bustableUrl = `${
+          data.me.profileImageUrl
+        }?v=${new Date().getTime()}`;
+        setCurrentImageUrl(bustableUrl);
+      }
     }
   }, [data]);
 
@@ -168,7 +171,6 @@ export default function ProfileForm({
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
-        console.error("Erro S3:", errorText);
         toast.error(errorText);
       }
 

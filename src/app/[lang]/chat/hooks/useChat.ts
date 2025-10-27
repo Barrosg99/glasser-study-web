@@ -73,7 +73,7 @@ export function useChat({
       },
     },
     onError: () => {
-      toast.error("Member not found");
+      toast.error(dictionary.toast.memberNotFound);
     },
   });
 
@@ -169,10 +169,10 @@ export function useChat({
       },
     },
     onCompleted: () => {
-      toast.success("Chat deletado com sucesso");
+      toast.success(dictionary.toast.deleteSuccess);
     },
     onError: () => {
-      toast.error("Erro ao deletar chat");
+      toast.error(dictionary.toast.deleteError);
     },
     update: (cache, { data: mutationData }) => {
       cache.evict({
@@ -195,7 +195,7 @@ export function useChat({
       refetchChats();
     },
     onError: () => {
-      toast.error("Erro ao gerenciar convite");
+      toast.error(dictionary.toast.manageInvitationError);
     },
   });
 
@@ -207,11 +207,11 @@ export function useChat({
       },
     },
     onCompleted: () => {
-      toast.success("Chat saído com sucesso");
+      toast.success(dictionary.toast.exitChatSuccess);
       refetchChats();
     },
     onError: () => {
-      toast.error("Erro ao sair do chat");
+      toast.error(dictionary.toast.exitChatError);
     },
   });
 

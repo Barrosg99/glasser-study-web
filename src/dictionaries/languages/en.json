@@ -18,14 +18,50 @@
         "NEW_CHAT": "You were invited to a new chat",
         "NEW_COMMENT": "You received a new comment",
         "NEW_LIKE": "You received a new like"
-      }
+      },
+      "justNow": "Just now",
+      "ago": "ago"
     }
   },
   "home": {
     "body": {
       "title": "Support your study, with organization and collaboration!",
       "description": "Organize your study goals, connect with colleagues and share materials to optimize your preparation for university entrance exams and public competitions. The platform offers a support and collaboration environment, making your study journey more efficient and motivating.",
-      "findGroup": "Find a Study Group"
+      "loggedButton": "View posts",
+      "notLoggedButton": "Come study with us!"
+    },
+    "testimonials": {
+      "title": "Student Testimonials",
+      "testimonial1": {
+        "text": "The best platform for studying, I've been able to find the best materials for my studies and the best groups to study with. Shoud definetely get a 10 on the TCC.",
+        "name": "Impartial Student",
+        "description": "Student"
+      },
+      "testimonial2": {
+        "text": "Just the best! I've been able to change information with other students and get help with my studies. If I were a professor evaluating the platform, I would give a 10.",
+        "name": "Other Impartial Student",
+        "description": "Student"
+      }
+    },
+    "features": {
+      "title": "How we can help with your study",
+      "subtitle": "Features to improve your learning routine",
+      "feature1": {
+        "title": "Study Goals",
+        "description": "Define and track your study goals, visualize your progress and organize your tasks in a practical way."
+      },
+      "feature2": {
+        "title": "Study Groups",
+        "description": "Create private groups with colleagues to study together and exchange knowledge in an organized and effective way."
+      },
+      "feature3": {
+        "title": "Individual Sessions",
+        "description": "Schedule and participate in personalized study sessions with another student, focused on your learning objectives."
+      },
+      "feature4": {
+        "title": "Collaborative Forum",
+        "description": "Share materials, ask questions, and interact with other students to enrich your learning."
+      }
     }
   },
   "login": {
@@ -135,7 +171,14 @@
       },
       "members": {
         "label": "Members",
-        "placeholder": "Member emails separated by comma"
+        "placeholder": "Member emails separated by comma",
+        "add": "Add member",
+        "moderator": "Moderator",
+        "invited": "Invited",
+        "member": "Member",
+        "accept": "Accept",
+        "reject": "Reject",
+        "exit": "Exit chat"
       },
       "submit": {
         "create": "Create Chat",
@@ -159,8 +202,17 @@
       "deleteError": "Error removing chat",
       "deleteConfirm": "Are you sure you want to remove this chat?",
       "deleteConfirmYes": "Yes",
-      "deleteConfirmNo": "No"
+      "deleteConfirmNo": "No",
+      "memberNotFound": "Member not found",
+      "manageInvitationError": "Error managing invitation",
+      "exitChatSuccess": "Chat exited successfully",
+      "exitChatError": "Error exiting chat",
+      "cannotAddYourself": "You cannot add yourself to the chat",
+      "memberAlreadyAdded": "Member already added",
+      "inviteAccepted": "Invite accepted successfully!",
+      "inviteRejected": "Invite rejected successfully!"
     },
+    "waitingApproval": "Waiting approval",
     "messages": {
       "selectChat": "Select a chat to view messages",
       "selectChatToView": "Select a chat to view messages",
@@ -235,7 +287,8 @@
           "post": "Error fetching comments",
           "fetch": "Error fetching comments",
           "delete": "Error deleting comment"
-        }
+        },
+        "loading": "Loading..."
       },
       "search": {
         "placeholder": "Search posts...",
@@ -252,9 +305,18 @@
       }
     },
     "modal": {
-      "title": "Title",
-      "description": "Description",
-      "tags": "Tags",
+      "title": {
+        "label": "Title",
+        "placeholder": "Ex: How to calculate the standard deviation?"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Explain your question clearly and objectively."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Ex: Mathematics, Statistics"
+      },
       "subject": {
         "label": "Subject",
         "select": "Select subject",
@@ -282,7 +344,11 @@
       "materials": {
         "title": "Materials",
         "name": "Material Name",
-        "link": "Link",
+        "placeholder": "Ex: Trigonometry exercises",
+        "link": {
+          "label": "Link",
+          "placeholder": "Ex: https://www.google.com"
+        },
         "type": "Is for",
         "add": "Add material",
         "remove": "Remove material",

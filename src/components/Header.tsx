@@ -347,8 +347,6 @@ export default function Header({
         excludeElement={notificationButtonRef.current}
         dictionary={{
           notifications: dictionary.notifications,
-          noNotifications: dictionary.notifications.noNotifications,
-          markAllAsRead: dictionary.notifications.markAllAsRead,
         }}
         onMarkAsRead={(id) => {
           readNotification({ variables: { id } });

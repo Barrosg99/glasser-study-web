@@ -59,14 +59,6 @@
       "feature4": {
         "title": "Collaborative Forum",
         "description": "Share materials, ask questions, and interact with other students to enrich your learning."
-      },
-      "feature5": {
-        "title": "Material Search",
-        "description": "Search and discover relevant study materials quickly, with personalized filters to facilitate your search according to your needs and interests."
-      },
-      "feature6": {
-        "title": "Material Recommendation",
-        "description": "Receive personalized suggestions for study materials based on your progress, goals, and preferences to optimize your preparation and learning."
       }
     }
   },
@@ -205,8 +197,13 @@
       "memberNotFound": "Member not found",
       "manageInvitationError": "Error managing invitation",
       "exitChatSuccess": "Chat exited successfully",
-      "exitChatError": "Error exiting chat"
+      "exitChatError": "Error exiting chat",
+      "cannotAddYourself": "You cannot add yourself to the chat",
+      "memberAlreadyAdded": "Member already added",
+      "inviteAccepted": "Invite accepted successfully!",
+      "inviteRejected": "Invite rejected successfully!"
     },
+    "waitingApproval": "Waiting approval",
     "messages": {
       "selectChat": "Select a chat to view messages",
       "selectChatToView": "Select a chat to view messages",

@@ -59,14 +59,6 @@
       "feature4": {
         "title": "Fórum Colaborativo",
         "description": "Compartilhe materiais, tire dúvidas e interaja com outros estudantes para enriquecer seu aprendizado."
-      },
-      "feature5": {
-        "title": "Busca de Materiais",
-        "description": "Pesquise e descubra materiais de estudo relevantes rapidamente, com filtros personalizados para facilitar sua busca conforme suas necessidades e interesses."
-      },
-      "feature6": {
-        "title": "Recomendação de Materiais",
-        "description": "Receba sugestões personalizadas de materiais de estudo com base no seu progresso, metas e preferências para otimizar sua preparação e aprendizado."
       }
     }
   },
@@ -202,8 +194,13 @@
       "memberNotFound": "Membro não encontrado",
       "manageInvitationError": "Erro ao gerenciar convite",
       "exitChatSuccess": "Você saiu do chat com sucesso",
-      "exitChatError": "Erro ao sair do chat"
+      "exitChatError": "Erro ao sair do chat",
+      "cannotAddYourself": "Você não pode adicionar você mesmo ao chat",
+      "memberAlreadyAdded": "Membro já adicionado",
+      "inviteAccepted": "Convite aceito com sucesso!",
+      "inviteRejected": "Convite recusado com sucesso!"
     },
+    "waitingApproval": "Aguardando aprovação",
     "messages": {
       "selectChat": "Selecione um chat para ver as mensagens",
       "selectChatToView": "Selecione um chat para ver as mensagens",
@@ -354,5 +351,4 @@
         "removeError": "Erro ao remover publicação"
       }
     }
-  }
-}
+  }}

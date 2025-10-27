@@ -14,7 +14,7 @@ export default function Home({
   const router = useRouter();
 
   const handleClick = () => {
-    if (!user) {
+    if (user) {
       router.push("/posts");
     } else {
       router.push("/login");
@@ -35,8 +35,6 @@ export default function Home({
     features.feature2,
     features.feature3,
     features.feature4,
-    // features.feature5,
-    // features.feature6,
   ];
 
   return (
@@ -44,7 +42,7 @@ export default function Home({
       <div className="max-w-2xl mb-16">
         <h2 className="text-3xl text-black mb-4 ">{body.title}</h2>
         <p className="text-gray-600 mb-8">{body.description}</p>
-        {!user ? (
+        {user ? (
           <button
             onClick={handleClick}
             className="bg-[#990000] text-white px-6 py-2 rounded hover:bg-red-600 transition-all duration-300"

@@ -177,10 +177,10 @@ export default function ChatsPage({
 
     if (memberData?.user) {
       if (memberData.user.id === user?.id) {
-        toast.error("You cannot add yourself to the chat");
+        toast.error(dictionary.toast.cannotAddYourself);
         return;
       } else if (memberList.some((m) => m.user.id === memberData.user.id)) {
-        toast.error("Member already added");
+        toast.error(dictionary.toast.memberAlreadyAdded);
         return;
       } else {
         setMemberList([
@@ -203,9 +203,9 @@ export default function ChatsPage({
   const handleChatInvite = async (id: string, accept: boolean) => {
     await handleManageInvitation(id, accept);
     if (accept) {
-      toast.success("Convite aceito com sucesso!");
+      toast.success(dictionary.toast.inviteAccepted);
     } else {
-      toast.success("Convite recusado com sucesso!");
+      toast.success(dictionary.toast.inviteRejected);
     }
     setShowModal(false);
     resetForm();
@@ -280,7 +280,7 @@ export default function ChatsPage({
                         {chat.name}
                       </div>
                       <div className="text-sm text-gray-700">
-                        Aguardando aprovação
+                        {dictionary.waitingApproval}
                       </div>
                     </div>
                   </li>

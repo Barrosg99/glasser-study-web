@@ -221,14 +221,14 @@ export default function PostModal({
 
             <div className="flex-1">
               <label className="block text-sm font-medium text-black mb-2">
-                {dictionary.title}
+                {dictionary.title.label}
                 <span className="text-red-500"> *</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Como calcular o desvio padrão?"
+                placeholder={dictionary.title.placeholder}
                 className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
               />
@@ -237,13 +237,13 @@ export default function PostModal({
 
           <div>
             <label className="block text-sm font-medium text-black mb-2">
-              {dictionary.description}
+              {dictionary.description.label}
               <span className="text-red-500"> *</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Explique sua dúvida de forma clara e objetiva."
+              placeholder={dictionary.description.placeholder}
               className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 h-32 resize-none"
               required
             />
@@ -262,7 +262,7 @@ export default function PostModal({
                     onChange={(e) =>
                       handleMaterialChange(index, "name", e.target.value)
                     }
-                    placeholder="Ex: Exercícios de Trigonometria"
+                    placeholder={dictionary.materials.placeholder}
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   />
@@ -270,7 +270,7 @@ export default function PostModal({
 
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-black mb-2">
-                    {dictionary.materials.link}*
+                    {dictionary.materials.link.label}*
                   </label>
                   <input
                     type="url"
@@ -278,7 +278,7 @@ export default function PostModal({
                     onChange={(e) =>
                       handleMaterialChange(index, "link", e.target.value)
                     }
-                    placeholder="URL do material"
+                    placeholder={dictionary.materials.link.placeholder}
                     className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   />
@@ -332,14 +332,14 @@ export default function PostModal({
 
           <div>
             <label className="block text-sm font-medium text-black mb-2">
-              {dictionary.tags}
+              {dictionary.tags.label}
               <span className="text-red-500"> *</span>
             </label>
             <input
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              placeholder="Ex: Matemática, Estatística"
+              placeholder={dictionary.tags.placeholder}
               className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />

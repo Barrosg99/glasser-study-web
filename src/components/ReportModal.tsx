@@ -1,7 +1,10 @@
+"use client";
+
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { gql, useMutation } from "@apollo/client";
 import React, { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
+import { useParams } from "next/navigation";
 
 type ReportModalProps = {
   isOpen: boolean;
@@ -26,6 +29,9 @@ const ReportModal: React.FC<ReportModalProps> = ({
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
 
+  const params = useParams();
+  const { lang } = params;
+
   const [createReport, { loading }] = useMutation(CREATE_REPORT_MUTATION, {
     variables: {
       saveReportDto: {
@@ -49,9 +55,16 @@ const ReportModal: React.FC<ReportModalProps> = ({
       setReason("");
       setDetails("");
       onClose();
-      toast.success("Denúncia enviada com sucesso.");
+
+      const msg =
+        lang === "pt"
+          ? "Denúncia enviada com sucesso."
+          : "Report sent successfully.";
+      toast.success(msg);
     } catch {
-      toast.error("Erro ao enviar denúncia.");
+      const msg =
+        lang === "pt" ? "Erro ao enviar denúncia." : "Error sending report.";
+      toast.error(msg);
     }
   };
 
@@ -101,10 +114,12 @@ const ReportModal: React.FC<ReportModalProps> = ({
         >
           ×
         </button>
-        <h2 style={{ marginBottom: 16, fontSize: 20 }}>Denunciar</h2>
+        <h2 style={{ marginBottom: 16, fontSize: 20 }}>
+          {lang === "pt" ? "Denunciar" : "Report"}
+        </h2>
         <form onSubmit={handleSubmit}>
           <label style={{ display: "block", marginBottom: 8 }}>
-            Motivo
+            {lang === "pt" ? "Motivo" : "Reason"}
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -116,15 +131,23 @@ const ReportModal: React.FC<ReportModalProps> = ({
                 padding: 6,
               }}
             >
-              <option value="">Selecione...</option>
-              <option value="spam">Spam</option>
-              <option value="ofensivo">Conteúdo ofensivo</option>
-              <option value="incorreto">Informação incorreta</option>
-              <option value="outro">Outro</option>
+              <option value="">
+                {lang === "pt" ? "Selecione..." : "Select..."}
+              </option>
+              <option value="spam">{lang === "pt" ? "Spam" : "Spam"}</option>
+              <option value="ofensivo">
+                {lang === "pt" ? "Conteúdo ofensivo" : "Offensive content"}
+              </option>
+              <option value="incorreto">
+                {lang === "pt"
+                  ? "Informação incorreta"
+                  : "Incorrect information"}
+              </option>
+              <option value="outro">{lang === "pt" ? "Outro" : "Other"}</option>
             </select>
           </label>
           <label style={{ display: "block", marginBottom: 8 }}>
-            Detalhes (opcional)
+            {lang === "pt" ? "Detalhes (opcional)" : "Details (optional)"}
             <textarea
               value={details}
               onChange={(e) => setDetails(e.target.value)}
@@ -136,7 +159,11 @@ const ReportModal: React.FC<ReportModalProps> = ({
                 padding: 6,
                 resize: "vertical",
               }}
-              placeholder="Descreva o motivo da denúncia"
+              placeholder={
+                lang === "pt"
+                  ? "Descreva o motivo da denúncia"
+                  : "Describe the reason for the report"
+              }
             />
           </label>
           <button
@@ -154,7 +181,13 @@ const ReportModal: React.FC<ReportModalProps> = ({
               opacity: loading ? 0.7 : 1,
             }}
           >
-            {loading ? "Enviando..." : "Enviar denúncia"}
+            {loading
+              ? lang === "pt"
+                ? "Enviando..."
+                : "Sending..."
+              : lang === "pt"
+              ? "Enviar denúncia"
+              : "Send report"}
           </button>
         </form>
       </div>

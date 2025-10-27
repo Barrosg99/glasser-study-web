@@ -25,9 +25,9 @@ interface NotificationModalProps {
       options: {
         [key: string]: string;
       };
+      justNow: string;
+      ago: string;
     };
-    noNotifications: string;
-    markAllAsRead: string;
   };
   excludeElement?: HTMLElement | null;
 }
@@ -91,10 +91,10 @@ export default function NotificationModal({
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return `${dictionary.notifications.justNow}`;
+    if (minutes < 60) return `${minutes}m ${dictionary.notifications.ago}`;
+    if (hours < 24) return `${hours}h ${dictionary.notifications.ago}`;
+    if (days < 7) return `${days}d ${dictionary.notifications.ago}`;
 
     return new Date(timestamp).toLocaleDateString();
   };

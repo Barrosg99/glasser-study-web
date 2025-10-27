@@ -112,7 +112,7 @@ export default function ChatModal({
               className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
               onClick={onAddMember}
             >
-              Add
+              {dictionary.create.members.add}
             </button>
           </div>
           {memberList.map((member) => (
@@ -122,10 +122,10 @@ export default function ChatModal({
             >
               {member.user.name} - {member.user.email} -{" "}
               {member.isModerator
-                ? "Moderator"
+                ? dictionary.create.members.moderator
                 : member.isInvited
-                ? "Invited"
-                : "Member"}
+                ? dictionary.create.members.invited
+                : dictionary.create.members.member}
               <span
                 className="text-red-500 cursor-pointer"
                 onClick={() => onRemoveMember(member.user.id)}
@@ -168,14 +168,14 @@ export default function ChatModal({
                   onClick={() => onChatInvite(selectedChat.id, true)}
                   className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
                 >
-                  Aceitar
+                  {dictionary.create.members.accept}
                 </button>
                 <button
                   type="button"
                   onClick={() => onChatInvite(selectedChat.id, false)}
                   className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition mr-2"
                 >
-                  Recusar
+                  {dictionary.create.members.reject}
                 </button>
               </>
             )}
@@ -187,7 +187,7 @@ export default function ChatModal({
                   onClick={() => onExitChat(selectedChat.id)}
                   className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
                 >
-                  Sair do chat
+                  {dictionary.create.members.exit}
                 </button>
               )}
           </div>

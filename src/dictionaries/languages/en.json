@@ -18,7 +18,9 @@
         "NEW_CHAT": "You were invited to a new chat",
         "NEW_COMMENT": "You received a new comment",
         "NEW_LIKE": "You received a new like"
-      }
+      },
+      "justNow": "Just now",
+      "ago": "ago"
     }
   },
   "home": {
@@ -169,7 +171,14 @@
       },
       "members": {
         "label": "Members",
-        "placeholder": "Member emails separated by comma"
+        "placeholder": "Member emails separated by comma",
+        "add": "Add member",
+        "moderator": "Moderator",
+        "invited": "Invited",
+        "member": "Member",
+        "accept": "Accept",
+        "reject": "Reject",
+        "exit": "Exit chat"
       },
       "submit": {
         "create": "Create Chat",
@@ -278,7 +287,8 @@
           "post": "Error fetching comments",
           "fetch": "Error fetching comments",
           "delete": "Error deleting comment"
-        }
+        },
+        "loading": "Loading..."
       },
       "search": {
         "placeholder": "Search posts...",
@@ -295,9 +305,18 @@
       }
     },
     "modal": {
-      "title": "Title",
-      "description": "Description",
-      "tags": "Tags",
+      "title": {
+        "label": "Title",
+        "placeholder": "Ex: How to calculate the standard deviation?"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Explain your question clearly and objectively."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Ex: Mathematics, Statistics"
+      },
       "subject": {
         "label": "Subject",
         "select": "Select subject",
@@ -325,7 +344,11 @@
       "materials": {
         "title": "Materials",
         "name": "Material Name",
-        "link": "Link",
+        "placeholder": "Ex: Trigonometry exercises",
+        "link": {
+          "label": "Link",
+          "placeholder": "Ex: https://www.google.com"
+        },
         "type": "Is for",
         "add": "Add material",
         "remove": "Remove material",

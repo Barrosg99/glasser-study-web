@@ -18,7 +18,9 @@
         "NEW_CHAT": "Você foi convidado para um novo chat",
         "NEW_COMMENT": "Você recebeu um novo comentário",
         "NEW_LIKE": "Você recebeu um novo like"
-      }
+      },
+      "justNow": "Agora mesmo",
+      "ago": "atrás"
     }
   },
   "home": {
@@ -166,7 +168,14 @@
       },
       "members": {
         "label": "Membros",
-        "placeholder": "E-mails dos membros separados por vírgula"
+        "placeholder": "E-mails dos membros separados por vírgula",
+        "add": "Adicionar membro",
+        "moderator": "Moderador",
+        "invited": "Convite",
+        "member": "Membro",
+        "accept": "Aceitar",
+        "reject": "Recusar",
+        "exit": "Sair do chat"
       },
       "submit": {
         "create": "Criar Chat",
@@ -275,7 +284,8 @@
           "post": "Erro ao buscar comentários",
           "fetch": "Erro ao buscar comentários",
           "delete": "Erro ao excluir comentário"
-        }
+        },
+        "loading": "Carregando..."
       },
       "search": {
         "placeholder": "Pesquisar posts...",
@@ -292,9 +302,18 @@
       }
     },
     "modal": {
-      "title": "Título",
-      "description": "Descrição",
-      "tags": "Tags",
+      "title": {
+        "label": "Título",
+        "placeholder": "Ex: Como calcular o desvio padrão?"
+      },
+      "description": {
+        "label": "Descrição",
+        "placeholder": "Explique sua dúvida de forma clara e objetiva."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Ex: Matemática, Estatística"
+      },
       "subject": {
         "label": "Disciplina",
         "select": "Selecione a disciplina",
@@ -322,7 +341,11 @@
       "materials": {
         "title": "Materiais",
         "name": "Nome do Material",
-        "link": "Link",
+        "placeholder": "Ex: Exercícios de Trigonometria",
+        "link": {
+          "label": "Link",
+          "placeholder": "Ex: https://www.google.com"
+        },
         "type": "É para",
         "add": "Adicionar material",
         "remove": "Remover material",
@@ -351,4 +374,5 @@
         "removeError": "Erro ao remover publicação"
       }
     }
-  }}
+  }
+}

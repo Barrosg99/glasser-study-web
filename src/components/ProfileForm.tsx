@@ -171,7 +171,6 @@ export default function ProfileForm({
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
-        console.error("Erro S3:", errorText);
         toast.error(errorText);
       }
 
